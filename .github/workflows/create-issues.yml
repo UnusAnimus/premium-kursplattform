@@ -96,7 +96,7 @@ jobs:
             gh issue create \
               --title "[AUTH] Passwort vergessen / Reset implementieren" \
               --body "## Beschreibung
-          Der „Passwort vergessen"-Link im Login ist nicht funktional. Nutzer haben keine Möglichkeit, ihr Passwort zurückzusetzen.
+          Der „Passwort vergessen\"-Link im Login ist nicht funktional. Nutzer haben keine Möglichkeit, ihr Passwort zurückzusetzen.
 
           ## Aufgaben
           - [ ] API-Route \`POST /api/auth/forgot-password\` (Token generieren + E-Mail senden)
@@ -122,7 +122,7 @@ jobs:
           ## Aufgaben
           - [ ] Einschreibungs-Logik implementieren (kostenlos vs. bezahlt)
           - [ ] Kurszugriff auf eingeschriebene Nutzer beschränken
-          - [ ] „Jetzt kaufen"-Button mit Zahlungs-Flow verbinden
+          - [ ] „Jetzt kaufen\"-Button mit Zahlungs-Flow verbinden
           - [ ] \`enrolledCourses\` in Datenbank speichern und abrufen
 
           ## Priorität
@@ -227,7 +227,7 @@ jobs:
             gh issue create \
               --title "[AUTH] Google OAuth Login implementieren" \
               --body "## Beschreibung
-          „Mit Google fortfahren"-Button ist deaktiviert (disabled). Viele Nutzer bevorzugen Social Login.
+          „Mit Google fortfahren\"-Button ist deaktiviert (disabled). Viele Nutzer bevorzugen Social Login.
 
           ## Aufgaben
           - [ ] Google OAuth App in Google Console erstellen
