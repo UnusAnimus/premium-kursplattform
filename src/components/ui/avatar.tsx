@@ -12,6 +12,7 @@ export function Avatar({ name, src, size = 'md', className = '' }: AvatarProps) 
   const initials = name ? name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : '?';
 
   if (src) {
+    // eslint-disable-next-line @next/next/no-img-element
     return <img src={src} alt={name || 'Avatar'} className={`rounded-full object-cover ${sizes[size]} ${className}`} />;
   }
 

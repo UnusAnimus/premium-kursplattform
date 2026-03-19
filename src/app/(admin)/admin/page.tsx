@@ -1,4 +1,4 @@
-import { adminStats, mockUsers, courses } from '@/lib/data';
+import { adminStats, mockUsers } from '@/lib/data';
 import { formatPrice } from '@/lib/utils';
 import Link from 'next/link';
 
