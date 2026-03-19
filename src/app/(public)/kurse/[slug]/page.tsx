@@ -4,15 +4,16 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 interface Props {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export function generateStaticParams() {
   return courses.map(course => ({ slug: course.slug }));
 }
 
-export default function CourseDetailPage({ params }: Props) {
-  const course = courses.find(c => c.slug === params.slug);
+export default async function CourseDetailPage({ params }: Props) {
+  const { slug } = await params;
+  const course = courses.find(c => c.slug === slug);
   if (!course) notFound();
 
   const totalDuration = course.modules.reduce((acc, mod) =>
