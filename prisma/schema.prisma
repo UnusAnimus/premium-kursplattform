@@ -191,3 +191,16 @@ model CourseEnrollment {
   @@unique([userId, courseId])
   @@map("course_enrollments")
 }
+
+model KiSettings {
+  id            String   @id @default("default")
+  model         String   @default("gpt-4o-mini")
+  temperature   Float    @default(0.7)
+  maxTokens     Int      @default(2048)
+  systemPrompt  String   @default("Du bist ein hilfreicher KI-Assistent für die Arkanum Akademie. Du beantwortest Fragen über Metaphysik, Astrologie, Hermetik, Schamanismus und andere spirituelle Themen. Beziehe dich dabei auf die Kursinhalte der Akademie. Antworte immer auf Deutsch.")
+  enabled       Boolean  @default(true)
+  knowledgeBase Boolean  @default(true)
+  updatedAt     DateTime @updatedAt
+
+  @@map("ki_settings")
+}
