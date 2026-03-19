@@ -1,15 +1,21 @@
+'use client';
+import { useSession } from 'next-auth/react';
 import { courses } from '@/lib/data';
 import { Progress } from '@/components/ui/progress';
 import Link from 'next/link';
 
 export default function DashboardPage() {
+  const { data: session } = useSession();
+  const userName = session?.user?.name ?? 'zurück';
+
+  // Show the first 3 courses as placeholder enrolled courses
   const enrolledCourses = courses.slice(0, 3);
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
       {/* Welcome */}
       <div>
-        <h1 className="text-3xl font-bold text-white mb-2">Willkommen zurück, Max! ✦</h1>
+        <h1 className="text-3xl font-bold text-white mb-2">Willkommen zurück, {userName}! ✦</h1>
         <p className="text-slate-400">Mach weiter, wo du aufgehört hast. Du bist auf dem richtigen Weg.</p>
       </div>
 

@@ -42,14 +42,21 @@ export default function AboPage() {
           ))}
         </div>
 
-        <div className="flex gap-3">
-          <button className="border border-violet-500 text-violet-300 hover:bg-violet-500/10 px-5 py-2 rounded-lg text-sm font-medium transition-all">
+        <div className="flex gap-3 flex-wrap">
+          <Link
+            href="/kontakt"
+            className="border border-violet-500 text-violet-300 hover:bg-violet-500/10 px-5 py-2 rounded-lg text-sm font-medium transition-all"
+          >
             Zahlungsmethode ändern
-          </button>
-          <button className="text-red-400 hover:text-red-300 text-sm font-medium transition-colors">
+          </Link>
+          <Link
+            href="/kontakt"
+            className="text-red-400 hover:text-red-300 text-sm font-medium transition-colors flex items-center"
+          >
             Abo kündigen
-          </button>
+          </Link>
         </div>
+        <p className="text-slate-600 text-xs mt-3">Für Änderungen am Abo kontaktiere uns bitte direkt.</p>
       </div>
 
       {/* Upgrade options */}

@@ -1,4 +1,15 @@
-import { mockUsers } from '@/lib/data';
+'use client';
+import { useState, useEffect } from 'react';
+
+interface DBUser {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  createdAt: string;
+  lastLoginAt: string | null;
+  subscription: { plan: string; status: string } | null;
+}
 
 const roleColors: Record<string, string> = {
   admin: 'bg-red-500/10 text-red-400 border-red-500/30',
@@ -6,64 +17,137 @@ const roleColors: Record<string, string> = {
   instructor: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
 };
 
+const roleLabels: Record<string, string> = {
+  admin: 'Admin',
+  member: 'Mitglied',
+  instructor: 'Dozent',
+};
+
 export default function AdminNutzerPage() {
+  const [users, setUsers] = useState<DBUser[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [roleChanging, setRoleChanging] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch('/api/admin/users')
+      .then(r => r.json())
+      .then((data: { users?: DBUser[]; error?: string }) => {
+        if (data.users) setUsers(data.users);
+        else setError(data.error ?? 'Nutzerdaten konnten nicht geladen werden.');
+      })
+      .catch(() => setError('Verbindungsfehler.'))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const handleRoleChange = async (userId: string, newRole: string) => {
+    setRoleChanging(userId);
+    try {
+      const res = await fetch(`/api/admin/users/${userId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: newRole }),
+      });
+      const data = await res.json() as { user?: DBUser; error?: string };
+      if (data.user) {
+        setUsers(prev => prev.map(u => u.id === userId ? { ...u, role: data.user!.role } : u));
+      }
+    } catch {
+      // ignore
+    } finally {
+      setRoleChanging(null);
+      setEditingId(null);
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-white mb-1">Nutzer verwalten</h1>
-          <p className="text-slate-400">{mockUsers.length} Nutzer (Demo)</p>
+          <p className="text-slate-400">{loading ? 'Lädt…' : `${users.length} Nutzer`}</p>
         </div>
-        <button className="bg-violet-600 hover:bg-violet-700 text-white font-semibold px-5 py-2.5 rounded-lg transition-all text-sm">
-          + Nutzer einladen
-        </button>
       </div>
 
+      {error && (
+        <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm px-4 py-3 rounded-xl">{error}</div>
+      )}
+
       <div className="bg-[#13131a] border border-[#1e1e2e] rounded-xl overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="border-b border-[#1e1e2e]">
-            <tr>
-              {['Nutzer', 'Rolle', 'Abo', 'Beigetreten', 'Letzter Login', 'Aktionen'].map(h => (
-                <th key={h} className="text-left text-slate-400 font-medium p-4">{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[#1e1e2e]">
-            {mockUsers.map(user => (
-              <tr key={user.id} className="hover:bg-white/2 transition-colors">
-                <td className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center text-white text-xs font-semibold">
-                      {user.name.split(' ').map(n => n[0]).join('')}
-                    </div>
-                    <div>
-                      <p className="text-white font-medium">{user.name}</p>
-                      <p className="text-slate-500 text-xs">{user.email}</p>
-                    </div>
-                  </div>
-                </td>
-                <td className="p-4">
-                  <span className={`text-xs px-2.5 py-1 rounded-full border ${roleColors[user.role]}`}>{user.role}</span>
-                </td>
-                <td className="p-4">
-                  {user.subscription ? (
-                    <span className="text-xs text-white capitalize">{user.subscription.plan}</span>
-                  ) : (
-                    <span className="text-xs text-slate-500">—</span>
-                  )}
-                </td>
-                <td className="p-4 text-slate-400 text-xs">{user.joinedAt}</td>
-                <td className="p-4 text-slate-400 text-xs">{user.lastLoginAt}</td>
-                <td className="p-4">
-                  <div className="flex gap-2">
-                    <button className="text-xs text-slate-400 hover:text-white transition-colors">Bearbeiten</button>
-                    <button className="text-xs text-red-400 hover:text-red-300 transition-colors">Sperren</button>
-                  </div>
-                </td>
+        {loading ? (
+          <div className="p-8 text-center text-slate-400">Nutzerdaten werden geladen…</div>
+        ) : users.length === 0 ? (
+          <div className="p-8 text-center text-slate-400">Noch keine Nutzer registriert.</div>
+        ) : (
+          <table className="w-full text-sm">
+            <thead className="border-b border-[#1e1e2e]">
+              <tr>
+                {['Nutzer', 'Rolle', 'Abo', 'Beigetreten', 'Letzter Login', 'Aktionen'].map(h => (
+                  <th key={h} className="text-left text-slate-400 font-medium p-4">{h}</th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-[#1e1e2e]">
+              {users.map(user => (
+                <tr key={user.id} className="hover:bg-white/2 transition-colors">
+                  <td className="p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center text-white text-xs font-semibold">
+                        {user.name.split(' ').map(n => n[0]).join('')}
+                      </div>
+                      <div>
+                        <p className="text-white font-medium">{user.name}</p>
+                        <p className="text-slate-500 text-xs">{user.email}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="p-4">
+                    {editingId === user.id ? (
+                      <select
+                        defaultValue={user.role}
+                        onChange={e => handleRoleChange(user.id, e.target.value)}
+                        disabled={roleChanging === user.id}
+                        className="bg-[#0a0a0f] border border-[#2a2a3e] text-white text-xs rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-violet-500"
+                      >
+                        <option value="member">Mitglied</option>
+                        <option value="instructor">Dozent</option>
+                        <option value="admin">Admin</option>
+                      </select>
+                    ) : (
+                      <span className={`text-xs px-2.5 py-1 rounded-full border ${roleColors[user.role] ?? roleColors['member']}`}>
+                        {roleLabels[user.role] ?? user.role}
+                      </span>
+                    )}
+                  </td>
+                  <td className="p-4">
+                    {user.subscription ? (
+                      <span className="text-xs text-white capitalize">{user.subscription.plan}</span>
+                    ) : (
+                      <span className="text-xs text-slate-500">—</span>
+                    )}
+                  </td>
+                  <td className="p-4 text-slate-400 text-xs">
+                    {new Date(user.createdAt).toLocaleDateString('de-DE')}
+                  </td>
+                  <td className="p-4 text-slate-400 text-xs">
+                    {user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString('de-DE') : '—'}
+                  </td>
+                  <td className="p-4">
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setEditingId(editingId === user.id ? null : user.id)}
+                        className="text-xs text-slate-400 hover:text-white transition-colors"
+                      >
+                        {editingId === user.id ? 'Abbrechen' : 'Rolle ändern'}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );

@@ -5,10 +5,42 @@ import { Textarea } from '@/components/ui/textarea';
 
 export default function KontaktPage() {
   const [sent, setSent] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSent(true);
+    setError('');
+    setLoading(true);
+
+    const form = e.currentTarget;
+    const data = new FormData(form);
+
+    try {
+      const res = await fetch('/api/kontakt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstName: data.get('firstName'),
+          lastName: data.get('lastName'),
+          email: data.get('email'),
+          subject: data.get('subject'),
+          message: data.get('message'),
+        }),
+      });
+
+      if (!res.ok) {
+        const json = await res.json() as { error?: string };
+        setError(json.error ?? 'Ein Fehler ist aufgetreten.');
+        return;
+      }
+
+      setSent(true);
+    } catch {
+      setError('Verbindungsfehler. Bitte versuche es erneut.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -59,18 +91,22 @@ export default function KontaktPage() {
             ) : (
               <form onSubmit={handleSubmit} className="bg-[#13131a] border border-[#1e1e2e] rounded-2xl p-8 space-y-6">
                 <h2 className="text-2xl font-bold text-white">Schreib uns</h2>
+                {error && (
+                  <p className="text-red-400 text-sm bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-2">{error}</p>
+                )}
                 <div className="grid grid-cols-2 gap-4">
-                  <Input label="Vorname" placeholder="Max" required />
-                  <Input label="Nachname" placeholder="Mustermann" required />
+                  <Input label="Vorname" name="firstName" placeholder="Max" required />
+                  <Input label="Nachname" name="lastName" placeholder="Mustermann" required />
                 </div>
-                <Input label="E-Mail" type="email" placeholder="max@example.com" required />
-                <Input label="Betreff" placeholder="Frage zu einem Kurs" required />
-                <Textarea label="Nachricht" placeholder="Schreib uns deine Frage oder Anmerkung..." rows={5} required />
+                <Input label="E-Mail" name="email" type="email" placeholder="max@example.com" required />
+                <Input label="Betreff" name="subject" placeholder="Frage zu einem Kurs" required />
+                <Textarea label="Nachricht" name="message" placeholder="Schreib uns deine Frage oder Anmerkung..." rows={5} required />
                 <button
                   type="submit"
-                  className="w-full bg-violet-600 hover:bg-violet-700 text-white font-semibold py-3.5 rounded-xl transition-all hover:shadow-lg hover:shadow-violet-500/30"
+                  disabled={loading}
+                  className="w-full bg-violet-600 hover:bg-violet-700 disabled:opacity-60 text-white font-semibold py-3.5 rounded-xl transition-all hover:shadow-lg hover:shadow-violet-500/30"
                 >
-                  Nachricht senden ✦
+                  {loading ? 'Wird gesendet…' : 'Nachricht senden ✦'}
                 </button>
               </form>
             )}

@@ -4,6 +4,18 @@ import { useState } from 'react';
 export default function EinstellungenPage() {
   const [notifications, setNotifications] = useState({ email: true, newsletter: false, updates: true });
   const [privacy, setPrivacy] = useState({ publicProfile: true, showProgress: false });
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  const handleSave = async () => {
+    setSaving(true);
+    setSaved(false);
+    // Simulate a brief save delay (would call an API endpoint in a full implementation)
+    await new Promise(resolve => setTimeout(resolve, 600));
+    setSaving(false);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 3000);
+  };
 
   return (
     <div className="max-w-3xl mx-auto space-y-8">
@@ -65,25 +77,39 @@ export default function EinstellungenPage() {
       <div className="bg-[#13131a] border border-[#1e1e2e] rounded-2xl p-6">
         <h2 className="text-xl font-bold text-white mb-6">Sicherheit</h2>
         <div className="space-y-3">
-          <button className="w-full text-left p-4 bg-[#0a0a0f] rounded-xl hover:bg-[#1a1a24] transition-all group">
+          <div className="w-full text-left p-4 bg-[#0a0a0f] rounded-xl">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-white text-sm font-medium">Passwort ändern</p>
-                <p className="text-slate-500 text-xs">Zuletzt geändert vor 3 Monaten</p>
+                <p className="text-slate-500 text-xs">Diese Funktion ist noch nicht verfügbar.</p>
               </div>
-              <span className="text-slate-500 group-hover:text-violet-400 transition-colors">→</span>
+              <span className="text-slate-600">→</span>
             </div>
-          </button>
-          <button className="w-full text-left p-4 bg-[#0a0a0f] rounded-xl hover:bg-[#1a1a24] transition-all group">
+          </div>
+          <div className="w-full text-left p-4 bg-[#0a0a0f] rounded-xl">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-white text-sm font-medium">Zwei-Faktor-Authentifizierung</p>
-                <p className="text-slate-500 text-xs">Empfohlen für mehr Sicherheit</p>
+                <p className="text-slate-500 text-xs">Diese Funktion ist noch nicht verfügbar.</p>
               </div>
-              <span className="text-slate-500 group-hover:text-violet-400 transition-colors">→</span>
+              <span className="text-slate-600">→</span>
             </div>
-          </button>
+          </div>
         </div>
+      </div>
+
+      {/* Save button */}
+      <div className="flex items-center gap-4">
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          className="bg-violet-600 hover:bg-violet-700 disabled:opacity-60 text-white font-semibold px-6 py-2.5 rounded-xl transition-all"
+        >
+          {saving ? 'Wird gespeichert…' : 'Einstellungen speichern'}
+        </button>
+        {saved && (
+          <span className="text-emerald-400 text-sm">✓ Einstellungen gespeichert</span>
+        )}
       </div>
     </div>
   );
