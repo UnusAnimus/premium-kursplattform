@@ -68,7 +68,7 @@ export function Navbar() {
             </button>
             {isLoggedIn ? (
               <>
-                <Link href={isAdmin ? '/admin' : '/dashboard'}>
+                <Link href={isAdmin ? '/admin' : '/dashboard'} data-testid={isAdmin ? 'nav-admin-link' : 'nav-dashboard-link'}>
                   <Button variant="ghost" size="sm" className="hidden sm:flex text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
                     {isAdmin ? 'Admin-Bereich' : 'Dashboard'}
                   </Button>
@@ -83,6 +83,7 @@ export function Navbar() {
                 <Button
                   size="sm"
                   variant="ghost"
+                  data-testid="nav-logout"
                   className="hidden sm:flex text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                   onClick={() => signOut({ callbackUrl: '/' })}
                 >
@@ -91,12 +92,12 @@ export function Navbar() {
               </>
             ) : (
               <>
-                <Link href="/login">
+                <Link href="/login" data-testid="nav-login-link">
                   <Button variant="ghost" size="sm" className="hidden sm:flex text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
                     Anmelden
                   </Button>
                 </Link>
-                <Link href="/login">
+                <Link href="/login" data-testid="nav-start-link">
                   <Button size="sm" className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white shadow-lg hover:shadow-violet-500/25">
                     Kostenlos starten
                   </Button>
