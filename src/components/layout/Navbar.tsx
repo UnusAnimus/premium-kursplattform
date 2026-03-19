@@ -2,11 +2,13 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useTheme } from '@/hooks/useTheme';
+import { useSession, signOut } from 'next-auth/react';
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { isDark, toggleTheme } = useTheme();
+  const { data: session } = useSession();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -20,6 +22,8 @@ export function Navbar() {
     { href: '/preise', label: 'Preise' },
     { href: '/kontakt', label: 'Kontakt' },
   ];
+
+  const isAdmin = session?.user?.role === 'admin';
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-[#0a0a0f]/90 backdrop-blur-md border-b border-[#1e1e2e] shadow-lg' : 'bg-transparent'}`}>
@@ -55,18 +59,45 @@ export function Navbar() {
             >
               {isDark ? '☀' : '🌙'}
             </button>
-            <Link
-              href="/login"
-              className="text-sm font-medium text-slate-300 hover:text-white transition-colors px-4 py-2"
-            >
-              Anmelden
-            </Link>
-            <Link
-              href="/login"
-              className="bg-violet-600 hover:bg-violet-700 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-all hover:shadow-lg hover:shadow-violet-500/25"
-            >
-              Mitglied werden
-            </Link>
+            {session ? (
+              <>
+                {isAdmin && (
+                  <Link
+                    href="/admin"
+                    className="text-sm font-medium text-amber-400 hover:text-amber-300 transition-colors px-4 py-2"
+                  >
+                    Admin ✦
+                  </Link>
+                )}
+                <Link
+                  href="/dashboard"
+                  className="text-sm font-medium text-slate-300 hover:text-white transition-colors px-4 py-2"
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={() => signOut({ callbackUrl: '/' })}
+                  className="bg-[#1e1e2e] hover:bg-[#2a2a3e] border border-[#2a2a3e] text-slate-300 hover:text-white text-sm font-medium px-4 py-2 rounded-lg transition-all"
+                >
+                  Abmelden
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="text-sm font-medium text-slate-300 hover:text-white transition-colors px-4 py-2"
+                >
+                  Anmelden
+                </Link>
+                <Link
+                  href="/login"
+                  className="bg-violet-600 hover:bg-violet-700 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-all hover:shadow-lg hover:shadow-violet-500/25"
+                >
+                  Mitglied werden
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile toggle */}
@@ -97,16 +128,37 @@ export function Navbar() {
               </Link>
             ))}
             <div className="pt-4 border-t border-[#1e1e2e] flex flex-col gap-3">
-              <Link href="/login" className="text-slate-300 hover:text-white font-medium transition-colors" onClick={() => setMobileOpen(false)}>
-                Anmelden
-              </Link>
-              <Link
-                href="/login"
-                className="bg-violet-600 hover:bg-violet-700 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-all text-center"
-                onClick={() => setMobileOpen(false)}
-              >
-                Mitglied werden
-              </Link>
+              {session ? (
+                <>
+                  {isAdmin && (
+                    <Link href="/admin" className="text-amber-400 hover:text-amber-300 font-medium transition-colors" onClick={() => setMobileOpen(false)}>
+                      Admin ✦
+                    </Link>
+                  )}
+                  <Link href="/dashboard" className="text-slate-300 hover:text-white font-medium transition-colors" onClick={() => setMobileOpen(false)}>
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={() => { signOut({ callbackUrl: '/' }); setMobileOpen(false); }}
+                    className="text-left text-slate-300 hover:text-white font-medium transition-colors"
+                  >
+                    Abmelden
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link href="/login" className="text-slate-300 hover:text-white font-medium transition-colors" onClick={() => setMobileOpen(false)}>
+                    Anmelden
+                  </Link>
+                  <Link
+                    href="/login"
+                    className="bg-violet-600 hover:bg-violet-700 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-all text-center"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    Mitglied werden
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
