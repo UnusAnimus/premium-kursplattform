@@ -1,17 +1,12 @@
 'use client';
 import { useSession } from 'next-auth/react';
+import { getInitials } from '@/lib/utils';
 
 export function AdminTopbar() {
   const { data: session } = useSession();
 
   const name = session?.user?.name || 'Admin';
-  const initials = name
-    .split(' ')
-    .filter(n => n.length > 0)
-    .map(n => n[0])
-    .join('')
-    .slice(0, 2)
-    .toUpperCase();
+  const initials = getInitials(name);
 
   return (
     <header className="h-16 border-b border-[var(--border-base)] bg-[var(--bg-surface)] flex items-center justify-between px-6">

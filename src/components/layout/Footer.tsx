@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import { useMemo } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 
 export function Footer() {
@@ -8,21 +9,25 @@ export function Footer() {
   const isLoggedIn = !!session?.user;
   const isAdmin = session?.user?.role === 'admin';
 
-  const akademieLinks = [
-    { href: '/ueber-uns', label: 'Über uns' },
-    { href: '/preise', label: 'Preise' },
-    { href: '/kontakt', label: 'Kontakt' },
-  ];
+  const akademieLinks = useMemo(() => {
+    const links = [
+      { href: '/ueber-uns', label: 'Über uns' },
+      { href: '/preise', label: 'Preise' },
+      { href: '/kontakt', label: 'Kontakt' },
+    ];
 
-  if (isLoggedIn) {
-    if (isAdmin) {
-      akademieLinks.push({ href: '/admin', label: 'Admin-Bereich' });
+    if (isLoggedIn) {
+      if (isAdmin) {
+        links.push({ href: '/admin', label: 'Admin-Bereich' });
+      } else {
+        links.push({ href: '/dashboard', label: 'Mitgliederbereich' });
+      }
     } else {
-      akademieLinks.push({ href: '/dashboard', label: 'Mitgliederbereich' });
+      links.push({ href: '/login', label: 'Mitglied werden' });
     }
-  } else {
-    akademieLinks.push({ href: '/login', label: 'Mitglied werden' });
-  }
+
+    return links;
+  }, [isLoggedIn, isAdmin]);
 
   return (
     <footer className="bg-[var(--bg-surface)] border-t border-[var(--border-base)] mt-auto">
