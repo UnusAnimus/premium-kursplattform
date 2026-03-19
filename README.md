@@ -1,36 +1,132 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Arkanum Akademie – Premium Kursplattform
 
-## Getting Started
+Eine moderne Next.js-Kursplattform für Metaphysik, Bewusstseinsentwicklung und esoterisches Wissen.
 
-First, run the development server:
+## ✨ Features
+
+- 🔐 **Authentifizierung** – Login/Logout via NextAuth.js (Credentials-Provider)
+- 🛡️ **Geschützte Routen** – Mitglieder- und Admin-Bereich werden per Middleware gesichert
+- 👑 **Super Admin** – Konfigurierbar über Umgebungsvariablen
+- 🌙 **Dark/Light Mode** – Umschaltbar, wird in LocalStorage gespeichert
+- 📱 **Responsive Design** – Mobile-first mit Tailwind CSS
+- 🎨 **Theme-Editor** – Admin kann Farben und Design anpassen
+
+## 🚀 Installation & Setup
+
+### 1. Abhängigkeiten installieren
+
+```bash
+npm install
+```
+
+### 2. Umgebungsvariablen konfigurieren
+
+Erstelle eine `.env.local` Datei (basierend auf `.env.example`):
+
+```bash
+cp .env.example .env.local
+```
+
+Öffne `.env.local` und trage deine Werte ein:
+
+```env
+# Pflichtfelder
+NEXTAUTH_SECRET=<zufälliger 32-Byte-Hex-String>
+NEXTAUTH_URL=http://localhost:3000
+
+# Super Admin – trage deine E-Mail ein
+SUPER_ADMIN_EMAIL=deine@email.de
+SUPER_ADMIN_NAME=Dein Name
+SUPER_ADMIN_PLAIN_PASSWORD=DeinSicheresPasswort123!
+```
+
+**NEXTAUTH_SECRET generieren:**
+```bash
+node -e "require('crypto').randomBytes(32).then?.(console.log) || console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+### 3. Entwicklungsserver starten
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Öffne [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 4. Als Super Admin anmelden
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Gehe zu `/login` und melde dich mit der E-Mail und dem Passwort an, die du in `.env.local` eingetragen hast.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🔑 Super Admin einrichten
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Der Super Admin wird vollständig über Umgebungsvariablen konfiguriert:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Variable | Beschreibung |
+|---|---|
+| `SUPER_ADMIN_EMAIL` | E-Mail-Adresse des Super Admins |
+| `SUPER_ADMIN_NAME` | Anzeigename des Super Admins |
+| `SUPER_ADMIN_PLAIN_PASSWORD` | Klartextpasswort (nur Entwicklung!) |
+| `SUPER_ADMIN_PASSWORD_HASH` | bcrypt-Hash (für Produktion empfohlen) |
 
-## Deploy on Vercel
+**bcrypt-Hash generieren (für Produktion):**
+```bash
+node -e "require('bcryptjs').hash('DeinPasswort', 12).then(console.log)"
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📁 Projektstruktur
+
+```
+src/
+├── app/
+│   ├── (public)/          # Öffentliche Seiten (Navbar + Footer)
+│   ├── (mitglieder)/      # Mitgliederbereich (geschützt)
+│   ├── (admin)/           # Adminbereich (geschützt, nur admin role)
+│   ├── api/auth/          # NextAuth API-Route
+│   └── login/             # Login/Registrierungs-Seite
+├── components/
+│   ├── layout/            # Navbar, Footer, Sidebars
+│   ├── sections/          # Hero, Features, CourseCard, ...
+│   └── ui/                # Button, Input, Card, ...
+├── hooks/                 # useTheme
+├── lib/                   # auth.ts, data.ts, types.ts, utils.ts
+├── middleware.ts           # Route-Schutz
+└── types/                 # NextAuth TypeScript-Erweiterungen
+```
+
+---
+
+## 🏗️ Was noch fehlt (Roadmap)
+
+Die Plattform ist ein UI-Prototyp. Folgende Features fehlen noch für den Produktionsbetrieb:
+
+- **Datenbank** – PostgreSQL/MySQL mit Prisma ORM
+- **Echte Nutzerverwaltung** – Registrierung, Einladungen, Passwort-Reset
+- **Zahlungen** – Stripe-Integration
+- **E-Mail** – Kontaktformular, Willkommens-E-Mails, Passwort-Reset
+- **Video-Hosting** – Kursinhalte hochladen und streamen
+- **KI-Assistent** – Echte OpenAI/Anthropic-Integration
+- **Google OAuth** – Social Login
+- **Analytics** – Nutzungsstatistiken
+
+Alle offen Issues sind auf GitHub als Issues dokumentiert.
+
+---
+
+## 🛠️ Technologie-Stack
+
+| Bereich | Technologie |
+|---|---|
+| Framework | Next.js 15 (App Router) |
+| Sprache | TypeScript |
+| Styling | Tailwind CSS |
+| Auth | NextAuth.js v4 |
+| Passwort-Hashing | bcryptjs |
+| Fonts | Geist (self-hosted) |
+
+## Deployment auf Vercel
+
+Auf [Vercel](https://vercel.com) die Umgebungsvariablen aus `.env.example` eintragen und deployen.
