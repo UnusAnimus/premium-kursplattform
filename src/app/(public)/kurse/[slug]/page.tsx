@@ -141,6 +141,7 @@ export default async function CourseDetailPage({ params }: Props) {
                   courseSlug={slug}
                   isLoggedIn={isLoggedIn}
                   isEnrolled={isEnrolled}
+                  price={course.price}
                   firstLessonId={firstLessonId}
                 />
                 <Link
