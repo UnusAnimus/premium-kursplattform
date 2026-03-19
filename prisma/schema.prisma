@@ -65,6 +65,7 @@ model User {
 
   subscription Subscription?
   payments     Payment[]
+  enrollments  CourseEnrollment[]
 
   @@map("users")
 }
@@ -94,7 +95,8 @@ model Course {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  modules Module[]
+  modules     Module[]
+  enrollments CourseEnrollment[]
 
   @@map("courses")
 }
@@ -161,4 +163,18 @@ model Payment {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("payments")
+}
+
+model CourseEnrollment {
+  id          String   @id @default(cuid())
+  enrolledAt  DateTime @default(now())
+  completedAt DateTime?
+
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId String
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@map("course_enrollments")
 }
