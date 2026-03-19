@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+import { EnrollButton } from '@/components/courses/EnrollButton';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -13,13 +15,50 @@ export function generateStaticParams() {
   return courses.map(course => ({ slug: course.slug }));
 }
 
+export const dynamic = 'force-dynamic';
+
 export default async function CourseDetailPage({ params }: Props) {
   const { slug } = await params;
   const course = courses.find(c => c.slug === slug);
   if (!course) notFound();
 
   const session = await getServerSession(authOptions);
-  const isLoggedIn = !!session?.user;
+  const isLoggedIn = !!session?.user?.id;
+
+  // Check enrollment status and get first lesson ID from DB
+  let isEnrolled = false;
+  let firstLessonId: string | null = null;
+  const userId = session?.user?.id;
+
+  if (userId) {
+    try {
+      const dbCourse = await prisma.course.findUnique({
+        where: { slug },
+        include: {
+          enrollments: {
+            where: { userId },
+          },
+          modules: {
+            orderBy: { order: 'asc' },
+            take: 1,
+            include: {
+              lessons: {
+                orderBy: { order: 'asc' },
+                take: 1,
+              },
+            },
+          },
+        },
+      });
+
+      if (dbCourse) {
+        isEnrolled = dbCourse.enrollments.length > 0;
+        firstLessonId = dbCourse.modules[0]?.lessons[0]?.id ?? null;
+      }
+    } catch {
+      // DB unavailable – fall back to non-enrolled state
+    }
+  }
 
   const totalDuration = course.modules.reduce((acc, mod) =>
     acc + mod.lessons.reduce((a, l) => a + l.duration, 0), 0
@@ -92,12 +131,18 @@ export default async function CourseDetailPage({ params }: Props) {
                     Du sparst {formatPrice(course.originalPrice - course.price)}!
                   </p>
                 )}
-                <Link
-                  href={isLoggedIn ? '/meine-kurse' : '/login'}
-                  className="block w-full bg-violet-600 hover:bg-violet-700 text-white font-semibold py-4 rounded-xl text-center transition-all hover:shadow-lg hover:shadow-violet-500/30 mb-3"
-                >
-                  {isLoggedIn ? 'Kurs fortsetzen ✦' : 'Jetzt einschreiben ✦'}
-                </Link>
+                {isEnrolled && (
+                  <p className="text-emerald-400 text-xs text-center mb-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg py-1.5">
+                    ✓ Du bist bereits eingeschrieben
+                  </p>
+                )}
+
+                <EnrollButton
+                  courseSlug={slug}
+                  isLoggedIn={isLoggedIn}
+                  isEnrolled={isEnrolled}
+                  firstLessonId={firstLessonId}
+                />
                 <Link
                   href="/preise"
                   className="block w-full border border-[#2a2a3e] hover:border-violet-500 text-slate-300 hover:text-white font-semibold py-3 rounded-xl text-center transition-all text-sm"

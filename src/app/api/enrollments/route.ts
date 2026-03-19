@@ -49,21 +49,24 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { courseId } = body as { courseId?: string };
+    const { courseId, courseSlug } = body as { courseId?: string; courseSlug?: string };
 
-    if (!courseId) {
-      return NextResponse.json({ error: 'Kurs-ID ist erforderlich.' }, { status: 400 });
+    if (!courseId && !courseSlug) {
+      return NextResponse.json({ error: 'Kurs-ID oder Kurs-Slug ist erforderlich.' }, { status: 400 });
     }
 
-    // Check if course exists in DB
-    const course = await prisma.course.findUnique({ where: { id: courseId } });
+    // Check if course exists in DB – look up by id or slug
+    const course = courseSlug
+      ? await prisma.course.findUnique({ where: { slug: courseSlug } })
+      : await prisma.course.findUnique({ where: { id: courseId } });
+
     if (!course) {
       return NextResponse.json({ error: 'Kurs nicht gefunden.' }, { status: 404 });
     }
 
     // Check if already enrolled
     const existing = await prisma.courseEnrollment.findUnique({
-      where: { userId_courseId: { userId: session.user.id, courseId } },
+      where: { userId_courseId: { userId: session.user.id, courseId: course.id } },
     });
 
     if (existing) {
@@ -71,12 +74,12 @@ export async function POST(req: NextRequest) {
     }
 
     const enrollment = await prisma.courseEnrollment.create({
-      data: { userId: session.user.id, courseId },
+      data: { userId: session.user.id, courseId: course.id },
     });
 
     // Update studentsCount
     await prisma.course.update({
-      where: { id: courseId },
+      where: { id: course.id },
       data: { studentsCount: { increment: 1 } },
     });
 

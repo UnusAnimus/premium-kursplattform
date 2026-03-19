@@ -1,17 +1,50 @@
-import { adminStats, mockUsers } from '@/lib/data';
+'use client';
+import { useState, useEffect } from 'react';
 import { formatPrice } from '@/lib/utils';
 import Link from 'next/link';
 
+interface AdminStats {
+  userCount: number;
+  courseCount: number;
+  enrollmentCount: number;
+  recentUsers: { id: string; name: string; email: string; role: string; createdAt: string }[];
+}
+
 export default function AdminDashboard() {
-  const recentUsers = mockUsers.slice(0, 5);
+  const [stats, setStats] = useState<AdminStats | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      fetch('/api/admin/users').then(r => r.ok ? r.json() as Promise<{ users: AdminStats['recentUsers'] }> : null),
+      fetch('/api/admin/courses').then(r => r.ok ? r.json() as Promise<{ courses: unknown[] }> : null),
+    ])
+      .then(([usersData, coursesData]) => {
+        setStats({
+          userCount: usersData?.users?.length ?? 0,
+          courseCount: coursesData?.courses?.length ?? 0,
+          enrollmentCount: 0,
+          recentUsers: (usersData?.users ?? []).slice(0, 5),
+        });
+      })
+      .catch(() => {/* ignore */})
+      .finally(() => setLoading(false));
+  }, []);
+
+  const roleColors: Record<string, string> = {
+    admin: 'bg-red-500/10 text-red-400',
+    member: 'bg-violet-500/10 text-violet-400',
+    instructor: 'bg-amber-500/10 text-amber-400',
+  };
+  const roleLabels: Record<string, string> = { admin: 'Admin', member: 'Mitglied', instructor: 'Dozent' };
 
   const metrics = [
-    { label: 'Gesamtumsatz', value: formatPrice(adminStats.totalRevenue), icon: '◆', change: '+12%', color: 'text-emerald-400' },
-    { label: 'Monatlicher Umsatz', value: formatPrice(adminStats.monthlyRevenue), icon: '▲', change: '+8%', color: 'text-emerald-400' },
-    { label: 'Registrierte Nutzer', value: adminStats.totalUsers.toLocaleString('de-DE'), icon: '◎', change: '+245', color: 'text-emerald-400' },
-    { label: 'Aktive Abos', value: adminStats.activeSubscriptions.toLocaleString('de-DE'), icon: '✦', change: '+89', color: 'text-emerald-400' },
-    { label: 'Kurse', value: adminStats.totalCourses.toString(), icon: '◈', change: '', color: 'text-slate-400' },
-    { label: 'Abschlussrate', value: `${adminStats.completionRate}%`, icon: '◐', change: '+3%', color: 'text-emerald-400' },
+    { label: 'Registrierte Nutzer', value: loading ? '—' : (stats?.userCount ?? 0).toLocaleString('de-DE'), icon: '◎', color: 'text-emerald-400' },
+    { label: 'Aktive Kurse', value: loading ? '—' : (stats?.courseCount ?? 0).toString(), icon: '◈', color: 'text-violet-400' },
+    { label: 'Einschreibungen', value: loading ? '—' : (stats?.enrollmentCount ?? 0).toLocaleString('de-DE'), icon: '✦', color: 'text-amber-400' },
+    { label: 'Gesamtumsatz', value: formatPrice(0), icon: '◆', color: 'text-emerald-400' },
+    { label: 'Aktive Abos', value: '—', icon: '▲', color: 'text-emerald-400' },
+    { label: 'Abschlussrate', value: '—', icon: '◐', color: 'text-slate-400' },
   ];
 
   return (
@@ -27,7 +60,6 @@ export default function AdminDashboard() {
           <div key={i} className="bg-[#13131a] border border-[#1e1e2e] rounded-xl p-5">
             <div className="flex items-center justify-between mb-3">
               <span className="text-xl text-violet-400">{m.icon}</span>
-              {m.change && <span className={`text-xs font-medium ${m.color}`}>{m.change}</span>}
             </div>
             <div className="text-2xl font-bold text-white mb-1">{m.value}</div>
             <div className="text-slate-400 text-xs">{m.label}</div>
@@ -42,9 +74,14 @@ export default function AdminDashboard() {
             <h2 className="text-lg font-semibold text-white">Neueste Nutzer</h2>
             <Link href="/admin/nutzer" className="text-violet-400 hover:text-violet-300 text-sm">Alle →</Link>
           </div>
+          {loading ? (
+            <div className="p-8 text-center text-slate-500 text-sm">Lädt…</div>
+          ) : (stats?.recentUsers ?? []).length === 0 ? (
+            <div className="p-8 text-center text-slate-500 text-sm">Noch keine Nutzer registriert.</div>
+          ) : (
           <table className="w-full text-sm">
             <tbody className="divide-y divide-[#1e1e2e]">
-              {recentUsers.map(user => (
+              {(stats?.recentUsers ?? []).map(user => (
                 <tr key={user.id} className="hover:bg-white/2 transition-colors">
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-3">
@@ -58,19 +95,18 @@ export default function AdminDashboard() {
                     </div>
                   </td>
                   <td className="px-5 py-3">
-                    <span className={`text-xs px-2.5 py-1 rounded-full ${
-                      user.role === 'admin' ? 'bg-red-500/10 text-red-400' :
-                      user.role === 'instructor' ? 'bg-amber-500/10 text-amber-400' :
-                      'bg-violet-500/10 text-violet-400'
-                    }`}>
-                      {user.role}
+                    <span className={`text-xs px-2.5 py-1 rounded-full ${roleColors[user.role] ?? roleColors['member']}`}>
+                      {roleLabels[user.role] ?? user.role}
                     </span>
                   </td>
-                  <td className="px-5 py-3 text-slate-500 text-xs">{user.joinedAt}</td>
+                  <td className="px-5 py-3 text-slate-500 text-xs">
+                    {new Date(user.createdAt).toLocaleDateString('de-DE')}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          )}
         </div>
 
         {/* Quick actions */}

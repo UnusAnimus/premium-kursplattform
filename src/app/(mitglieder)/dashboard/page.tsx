@@ -1,15 +1,47 @@
 'use client';
+import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { courses } from '@/lib/data';
 import { Progress } from '@/components/ui/progress';
 import Link from 'next/link';
+
+interface Enrollment {
+  id: string;
+  enrolledAt: string;
+  course: {
+    id: string;
+    slug: string;
+    title: string;
+    instructor: string;
+    category: string;
+    level: string;
+    lessonsCount: number;
+  };
+}
+
+const categoryIcon: Record<string, string> = {
+  Metaphysik: '∞',
+  Heilung: '✦',
+  Astrologie: '☽',
+  Hermetik: '⚗',
+  Traumarbeit: '◈',
+  Schamanismus: '⬡',
+};
 
 export default function DashboardPage() {
   const { data: session } = useSession();
   const userName = session?.user?.name ?? 'Nutzer';
+  const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Show the first 3 courses as placeholder enrolled courses
-  const enrolledCourses = courses.slice(0, 3);
+  useEffect(() => {
+    fetch('/api/enrollments')
+      .then(r => r.ok ? r.json() as Promise<{ enrollments: Enrollment[] }> : Promise.reject())
+      .then(data => setEnrollments(data.enrollments))
+      .catch(() => setEnrollments([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const recentCourses = enrollments.slice(0, 3);
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
@@ -22,10 +54,10 @@ export default function DashboardPage() {
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: 'Belegte Kurse', value: '3', icon: '◈', color: 'text-violet-400' },
-          { label: 'Abgeschlossene Lektionen', value: '24', icon: '✓', color: 'text-emerald-400' },
-          { label: 'Lernstunden gesamt', value: '18 Std.', icon: '🕐', color: 'text-amber-400' },
-          { label: 'Zertifikate', value: '1', icon: '◆', color: 'text-violet-400' },
+          { label: 'Belegte Kurse', value: loading ? '—' : String(enrollments.length), icon: '◈', color: 'text-violet-400' },
+          { label: 'Abgeschlossene Lektionen', value: '0', icon: '✓', color: 'text-emerald-400' },
+          { label: 'Lernstunden gesamt', value: '0 Std.', icon: '🕐', color: 'text-amber-400' },
+          { label: 'Zertifikate', value: '0', icon: '◆', color: 'text-violet-400' },
         ].map((stat, i) => (
           <div key={i} className="bg-[#13131a] border border-[#1e1e2e] rounded-xl p-5">
             <span className={`text-2xl ${stat.color}`}>{stat.icon}</span>
@@ -41,28 +73,39 @@ export default function DashboardPage() {
           <h2 className="text-xl font-bold text-white">Meine Kurse</h2>
           <Link href="/meine-kurse" className="text-violet-400 hover:text-violet-300 text-sm">Alle anzeigen →</Link>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {enrolledCourses.map((course, i) => {
-            const progress = [45, 72, 20][i];
-            return (
-              <div key={course.id} className="bg-[#13131a] border border-[#1e1e2e] rounded-xl p-5 hover:border-violet-500/50 transition-all">
+        {loading ? (
+          <div className="text-slate-500 text-sm py-8 text-center">Lade Kurse…</div>
+        ) : recentCourses.length === 0 ? (
+          <div className="bg-[#13131a] border border-[#1e1e2e] rounded-xl p-8 text-center">
+            <p className="text-slate-400 text-sm mb-4">Du bist noch in keinen Kurs eingeschrieben.</p>
+            <Link
+              href="/kurse"
+              className="inline-block bg-violet-600 hover:bg-violet-700 text-white font-semibold px-5 py-2 rounded-lg text-sm transition-all"
+            >
+              Kurse entdecken
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {recentCourses.map((enrollment) => (
+              <div key={enrollment.id} className="bg-[#13131a] border border-[#1e1e2e] rounded-xl p-5 hover:border-violet-500/50 transition-all">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 bg-violet-500/10 rounded-lg flex items-center justify-center text-xl text-violet-400">
-                    {i === 0 ? '∞' : i === 1 ? '✦' : '☽'}
+                    {categoryIcon[enrollment.course.category] ?? '◈'}
                   </div>
                   <div>
-                    <h3 className="text-white text-sm font-medium leading-snug">{course.title}</h3>
-                    <p className="text-slate-500 text-xs">{course.instructor}</p>
+                    <h3 className="text-white text-sm font-medium leading-snug">{enrollment.course.title}</h3>
+                    <p className="text-slate-500 text-xs">{enrollment.course.instructor}</p>
                   </div>
                 </div>
-                <Progress value={progress} showValue label={`${progress}% abgeschlossen`} />
-                <Link href={`/kurse/${course.slug}`} className="mt-4 block text-center text-xs text-violet-400 hover:text-violet-300 transition-colors">
+                <Progress value={0} showValue label="0% abgeschlossen" />
+                <Link href={`/kurse/${enrollment.course.slug}`} className="mt-4 block text-center text-xs text-violet-400 hover:text-violet-300 transition-colors">
                   Weiter lernen →
                 </Link>
               </div>
-            );
-          })}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Quick actions */}
@@ -89,3 +132,4 @@ export default function DashboardPage() {
     </div>
   );
 }
+
