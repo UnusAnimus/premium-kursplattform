@@ -9,7 +9,7 @@ interface CourseCardProps {
 
 export function CourseCard({ course }: CourseCardProps) {
   return (
-    <div className="bg-[#13131a] border border-[#1e1e2e] rounded-xl overflow-hidden hover:border-violet-500/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-violet-500/10 flex flex-col">
+    <div className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-xl overflow-hidden hover:border-violet-500/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-violet-500/10 flex flex-col">
       {/* Image area */}
       <div className="relative aspect-video bg-gradient-to-br from-violet-900/40 to-amber-900/20 flex items-center justify-center">
         <span className="text-6xl opacity-40">
@@ -22,29 +22,29 @@ export function CourseCard({ course }: CourseCardProps) {
         <span className="absolute top-3 left-3 bg-violet-500/80 text-white text-xs font-medium px-2.5 py-1 rounded-full">
           {course.category}
         </span>
-        <span className="absolute top-3 right-3 bg-[#13131a]/80 text-slate-300 text-xs px-2.5 py-1 rounded-full border border-[#1e1e2e]">
+        <span className="absolute top-3 right-3 bg-[var(--bg-surface)]/80 text-[var(--text-secondary)] text-xs px-2.5 py-1 rounded-full border border-[var(--border-base)]">
           {course.level}
         </span>
       </div>
 
       {/* Content */}
       <div className="p-5 flex flex-col flex-1">
-        <h3 className="font-semibold text-white text-base mb-1 leading-snug">{course.title}</h3>
-        <p className="text-slate-500 text-xs mb-3">von {course.instructor}</p>
+        <h3 className="font-semibold text-[var(--text-primary)] text-base mb-1 leading-snug">{course.title}</h3>
+        <p className="text-[var(--text-muted)] text-xs mb-3">von {course.instructor}</p>
 
         {/* Rating */}
         <div className="flex items-center gap-2 mb-3">
           <div className="flex text-amber-400 text-sm">
             {[1, 2, 3, 4, 5].map(star => (
-              <span key={star} className={star <= Math.round(course.rating) ? 'text-amber-400' : 'text-slate-600'}>★</span>
+              <span key={star} className={star <= Math.round(course.rating) ? 'text-amber-400' : 'text-[var(--border-strong)]'}>★</span>
             ))}
           </div>
           <span className="text-amber-400 text-sm font-medium">{course.rating}</span>
-          <span className="text-slate-500 text-xs">({course.reviewsCount})</span>
+          <span className="text-[var(--text-muted)] text-xs">({course.reviewsCount})</span>
         </div>
 
         {/* Meta */}
-        <div className="flex items-center gap-4 text-xs text-slate-500 mb-4">
+        <div className="flex items-center gap-4 text-xs text-[var(--text-muted)] mb-4">
           <span>🕐 {formatDuration(course.duration)}</span>
           <span>◈ {course.lessonsCount} Lektionen</span>
           {course.certificate && <span className="text-violet-400">◆ Zertifikat</span>}
@@ -53,9 +53,9 @@ export function CourseCard({ course }: CourseCardProps) {
         {/* Price & CTA */}
         <div className="mt-auto flex items-center justify-between">
           <div>
-            <span className="text-white font-bold text-xl">{formatPrice(course.price)}</span>
+            <span className="text-[var(--text-primary)] font-bold text-xl">{formatPrice(course.price)}</span>
             {course.originalPrice && (
-              <span className="text-slate-500 text-sm line-through ml-2">{formatPrice(course.originalPrice)}</span>
+              <span className="text-[var(--text-muted)] text-sm line-through ml-2">{formatPrice(course.originalPrice)}</span>
             )}
           </div>
           <Link

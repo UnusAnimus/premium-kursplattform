@@ -2,21 +2,21 @@ import { MemberSidebar } from '@/components/layout/MemberSidebar';
 
 export default function MemberLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen bg-[#0a0a0f]">
+    <div className="flex min-h-screen bg-[var(--bg-base)]">
       <MemberSidebar />
       <div className="flex-1 flex flex-col">
         {/* Top bar */}
-        <header className="h-16 border-b border-[#1e1e2e] bg-[#13131a]/50 flex items-center justify-between px-6">
+        <header className="h-16 border-b border-[var(--border-base)] bg-[var(--bg-surface)] flex items-center justify-between px-6">
           <div className="flex items-center gap-2">
-            <span className="text-slate-500 text-sm">Mitgliederbereich</span>
+            <span className="text-[var(--text-muted)] text-sm">Mitgliederbereich</span>
           </div>
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-full bg-violet-600 flex items-center justify-center text-white text-sm font-semibold">
               MM
             </div>
             <div>
-              <p className="text-white text-sm font-medium">Max Mondlicht</p>
-              <p className="text-slate-500 text-xs">Premium Mitglied</p>
+              <p className="text-[var(--text-primary)] text-sm font-medium">Max Mondlicht</p>
+              <p className="text-[var(--text-muted)] text-xs">Premium Mitglied</p>
             </div>
           </div>
         </header>
@@ -25,3 +25,4 @@ export default function MemberLayout({ children }: { children: React.ReactNode }
     </div>
   );
 }
+

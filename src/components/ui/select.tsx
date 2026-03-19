@@ -16,20 +16,21 @@ export function Select({ label, options, error, className = '', id, ...props }: 
   return (
     <div className="flex flex-col gap-1.5">
       {label && (
-        <label htmlFor={inputId} className="text-sm font-medium text-slate-300">
+        <label htmlFor={inputId} className="text-sm font-medium text-[var(--text-secondary)]">
           {label}
         </label>
       )}
       <select
         id={inputId}
-        className={`w-full bg-[#13131a] border ${error ? 'border-red-500' : 'border-[#1e1e2e]'} rounded-lg px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all ${className}`}
+        className={`w-full bg-[var(--bg-surface)] border ${error ? 'border-red-500' : 'border-[var(--border-base)]'} rounded-xl px-4 py-2.5 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all ${className}`}
         {...props}
       >
         {options.map(opt => (
-          <option key={opt.value} value={opt.value} className="bg-[#13131a]">{opt.label}</option>
+          <option key={opt.value} value={opt.value} className="bg-[var(--bg-surface)]">{opt.label}</option>
         ))}
       </select>
       {error && <p className="text-xs text-red-400">{error}</p>}
     </div>
   );
 }
+

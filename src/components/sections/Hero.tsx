@@ -1,89 +1,107 @@
 'use client';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { ChevronDown, Sparkles, Users, BookOpen, Star } from 'lucide-react';
 
 export function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#0a0a0f]">
-      {/* Animated background shapes */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Large gradient orbs */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-violet-600/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-amber-500/8 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-violet-900/5 rounded-full blur-3xl" />
+    <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[var(--bg-base)]">
+      {/* Layer 1: Large gradient orbs */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-violet-600/20 dark:bg-violet-600/15 rounded-full blur-[120px] animate-pulse-glow" />
+        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/15 dark:bg-purple-500/10 rounded-full blur-[100px] animate-pulse-glow" style={{ animationDelay: '1.5s' }} />
+        <div className="absolute top-1/2 right-1/3 w-[300px] h-[300px] bg-amber-500/10 dark:bg-amber-500/08 rounded-full blur-[80px] animate-pulse-glow" style={{ animationDelay: '3s' }} />
+      </div>
 
-        {/* Floating geometric symbols */}
-        <div className="animate-float absolute top-20 left-[10%] text-violet-400/30 text-6xl select-none">⬡</div>
-        <div className="animate-float-delayed absolute top-32 right-[15%] text-amber-400/20 text-5xl select-none">✦</div>
-        <div className="animate-float-slow absolute bottom-40 left-[20%] text-violet-500/25 text-4xl select-none">◈</div>
-        <div className="animate-float absolute top-1/2 right-[8%] text-violet-400/20 text-7xl select-none">△</div>
-        <div className="animate-float-delayed absolute bottom-32 right-[25%] text-amber-400/15 text-5xl select-none">◎</div>
-        <div className="animate-float-slow absolute top-[15%] left-[45%] text-violet-300/20 text-3xl select-none">⬟</div>
-        <div className="animate-float absolute bottom-[20%] left-[5%] text-amber-500/20 text-4xl select-none">◆</div>
-        <div className="animate-float-delayed absolute top-[60%] left-[30%] text-violet-400/15 text-5xl select-none">✧</div>
+      {/* Layer 2: Subtle grid */}
+      <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" style={{
+        backgroundImage: 'linear-gradient(var(--border-strong) 1px, transparent 1px), linear-gradient(90deg, var(--border-strong) 1px, transparent 1px)',
+        backgroundSize: '64px 64px'
+      }} />
 
-        {/* Grid overlay */}
-        <div
-          className="absolute inset-0 opacity-[0.02]"
-          style={{
-            backgroundImage: 'linear-gradient(rgba(124,58,237,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(124,58,237,0.5) 1px, transparent 1px)',
-            backgroundSize: '60px 60px',
-          }}
-        />
+      {/* Layer 3: Floating geometric shapes */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-20 right-[15%] w-24 h-24 border border-violet-500/20 rounded-2xl rotate-12 animate-float opacity-40" />
+        <div className="absolute bottom-32 left-[12%] w-16 h-16 border border-purple-400/20 rounded-full animate-float opacity-30" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/3 left-[8%] w-10 h-10 bg-violet-600/10 rounded-lg rotate-45 animate-float opacity-50" style={{ animationDelay: '1s' }} />
+        <div className="absolute bottom-1/3 right-[10%] w-20 h-20 border border-amber-500/15 rounded-full animate-float opacity-30" style={{ animationDelay: '3s' }} />
+      </div>
+
+      {/* Layer 4: Central decorative sphere */}
+      <div className="absolute top-[15%] right-[10%] hidden lg:block pointer-events-none">
+        <div className="relative w-48 h-48 opacity-30 dark:opacity-20">
+          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-violet-400 via-purple-500 to-indigo-600 blur-sm" />
+          <div className="absolute inset-2 rounded-full bg-gradient-to-br from-violet-300/50 to-purple-600/30 backdrop-blur-sm" />
+          <div className="absolute inset-0 rounded-full border border-violet-400/30" />
+          <div className="absolute -inset-4 rounded-full border border-violet-400/10" />
+          <div className="absolute -inset-8 rounded-full border border-violet-400/05" />
+        </div>
       </div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div className="inline-flex items-center gap-2 bg-violet-500/10 border border-violet-500/30 rounded-full px-4 py-2 mb-8">
-          <span className="text-violet-400 text-sm">✦</span>
-          <span className="text-violet-300 text-sm font-medium">Premium Wissensplattform für spirituelle Entwicklung</span>
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-32">
+        {/* Badge */}
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border-violet-500/20 mb-8 animate-reveal-fade">
+          <Sparkles className="w-4 h-4 text-violet-400" />
+          <span className="text-sm font-medium text-[var(--text-secondary)]">Premium Spirituelle Bildung</span>
         </div>
 
-        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6 tracking-tight">
-          Erwecke dein{' '}
-          <span className="bg-gradient-to-r from-violet-400 to-amber-400 bg-clip-text text-transparent">
-            verborgenes Wissen
-          </span>
+        {/* Headline */}
+        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-6 animate-reveal-up">
+          <span className="text-[var(--text-primary)]">Entfalte dein</span>{' '}
+          <span className="gradient-text">spirituelles</span>
+          <br />
+          <span className="text-[var(--text-primary)]">Potenzial</span>
         </h1>
 
-        <p className="text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-          Entdecke transformative Kurse in Metaphysik, Quantenheilung, Astrologie und mehr.
-          Über 6.000 Studierende haben bereits ihren spirituellen Pfad gefunden.
+        {/* Description */}
+        <p className="max-w-2xl mx-auto text-xl text-[var(--text-secondary)] mb-10 leading-relaxed animate-reveal-up delay-100">
+          Tiefe Weisheitslehren, transformative Praktiken und eine gleichgesinnte Gemeinschaft —
+          alles an einem Ort. Beginne deine Reise zur inneren Erleuchtung.
         </p>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-          <Link
-            href="/login"
-            className="bg-violet-600 hover:bg-violet-700 text-white font-semibold px-8 py-4 rounded-lg transition-all hover:shadow-lg hover:shadow-violet-500/30 text-lg"
-          >
-            Jetzt starten ✦
+        {/* CTAs */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16 animate-reveal-up delay-200">
+          <Link href="#preise">
+            <Button size="lg" className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white px-8 py-4 text-base shadow-lg hover:shadow-violet-500/30 w-full sm:w-auto">
+              Jetzt beginnen
+            </Button>
           </Link>
-          <Link
-            href="/kurse"
-            className="border border-[#2a2a3e] hover:border-violet-500 text-slate-300 hover:text-white font-semibold px-8 py-4 rounded-lg transition-all text-lg"
-          >
-            Kurse entdecken →
+          <Link href="#kurse">
+            <Button variant="outline" size="lg" className="px-8 py-4 text-base glass border-[var(--border-strong)] text-[var(--text-primary)] hover:border-violet-500/50 w-full sm:w-auto">
+              Kurse entdecken
+            </Button>
           </Link>
         </div>
 
         {/* Trust indicators */}
-        <div className="flex flex-wrap items-center justify-center gap-8 text-sm text-slate-500">
+        <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-[var(--text-muted)] animate-reveal-up delay-300">
           <div className="flex items-center gap-2">
-            <span className="text-amber-400">★★★★★</span>
-            <span>4.9 / 5 Bewertung</span>
+            <Users className="w-4 h-4 text-violet-400" />
+            <span>2.400+ Mitglieder</span>
           </div>
+          <div className="w-1 h-1 rounded-full bg-[var(--border-strong)]" />
           <div className="flex items-center gap-2">
-            <span className="text-violet-400">◎</span>
-            <span>6.000+ Studierende</span>
+            <BookOpen className="w-4 h-4 text-violet-400" />
+            <span>50+ Premium-Kurse</span>
           </div>
+          <div className="w-1 h-1 rounded-full bg-[var(--border-strong)]" />
           <div className="flex items-center gap-2">
-            <span className="text-violet-400">◈</span>
-            <span>30 Tage Geld-zurück-Garantie</span>
+            <Star className="w-4 h-4 text-amber-400" />
+            <span>4.9/5 Bewertung</span>
           </div>
         </div>
       </div>
 
-      {/* Bottom gradient fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0a0a0f] to-transparent" />
+      {/* Scroll indicator */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-reveal-fade delay-500">
+        <span className="text-xs text-[var(--text-muted)] uppercase tracking-widest">Entdecken</span>
+        <ChevronDown className="w-4 h-4 text-[var(--text-muted)] animate-bounce" />
+      </div>
+
+      {/* Bottom fade */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[var(--bg-base)] to-transparent pointer-events-none" />
     </section>
   );
 }
+

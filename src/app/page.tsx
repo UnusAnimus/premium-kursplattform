@@ -21,20 +21,20 @@ export default function HomePage() {
         <Features />
 
         {/* Featured Courses */}
-        <section className="py-24 bg-[#0a0a0f]">
+        <section id="kurse" className="py-24 bg-[var(--bg-surface-raised)]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
               <div className="inline-flex items-center gap-2 bg-violet-500/10 border border-violet-500/30 rounded-full px-4 py-2 mb-6">
                 <span className="text-violet-400 text-sm">◈</span>
-                <span className="text-violet-300 text-sm font-medium">Beliebteste Kurse</span>
+                <span className="text-violet-400 text-sm font-medium">Beliebteste Kurse</span>
               </div>
-              <h2 className="text-4xl font-bold text-white mb-4">
+              <h2 className="text-4xl font-bold text-[var(--text-primary)] mb-4">
                 Unsere{' '}
-                <span className="bg-gradient-to-r from-violet-400 to-amber-400 bg-clip-text text-transparent">
+                <span className="gradient-text">
                   Premium Kurse
                 </span>
               </h2>
-              <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+              <p className="text-[var(--text-secondary)] text-lg max-w-2xl mx-auto">
                 Entdecke unsere beliebtesten Kurse und beginne deine spirituelle Reise.
               </p>
             </div>
@@ -46,7 +46,7 @@ export default function HomePage() {
             <div className="text-center">
               <Link
                 href="/kurse"
-                className="border border-violet-500 text-violet-300 hover:bg-violet-500/10 font-semibold px-8 py-3 rounded-lg transition-all"
+                className="border border-violet-500 text-violet-400 hover:bg-violet-500/10 font-semibold px-8 py-3 rounded-lg transition-all"
               >
                 Alle Kurse ansehen →
               </Link>
@@ -57,20 +57,20 @@ export default function HomePage() {
         <Testimonials />
 
         {/* Pricing Preview */}
-        <section className="py-24 bg-[#0a0a0f]">
+        <section id="preise" className="py-24 bg-[var(--bg-surface-raised)]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-2 bg-violet-500/10 border border-violet-500/30 rounded-full px-4 py-2 mb-6">
                 <span className="text-violet-400 text-sm">◆</span>
-                <span className="text-violet-300 text-sm font-medium">Transparente Preise</span>
+                <span className="text-violet-400 text-sm font-medium">Transparente Preise</span>
               </div>
-              <h2 className="text-4xl font-bold text-white mb-4">
+              <h2 className="text-4xl font-bold text-[var(--text-primary)] mb-4">
                 Wähle deinen{' '}
-                <span className="bg-gradient-to-r from-violet-400 to-amber-400 bg-clip-text text-transparent">
+                <span className="gradient-text">
                   Lernpfad
                 </span>
               </h2>
-              <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+              <p className="text-[var(--text-secondary)] text-lg max-w-2xl mx-auto">
                 Flexible Mitgliedschaftsoptionen für jeden Lernenden.
               </p>
             </div>
@@ -83,16 +83,16 @@ export default function HomePage() {
         </section>
 
         {/* Final CTA */}
-        <section className="py-24 bg-gradient-to-b from-[#0a0a0f] to-violet-950/20">
+        <section className="py-24 bg-gradient-to-b from-[var(--bg-base)] to-violet-950/10 dark:to-violet-950/20">
           <div className="max-w-4xl mx-auto px-4 text-center">
             <div className="text-6xl mb-6">⬡</div>
-            <h2 className="text-4xl font-bold text-white mb-4">
+            <h2 className="text-4xl font-bold text-[var(--text-primary)] mb-4">
               Bereit für deine{' '}
-              <span className="bg-gradient-to-r from-violet-400 to-amber-400 bg-clip-text text-transparent">
+              <span className="gradient-text">
                 Transformation?
               </span>
             </h2>
-            <p className="text-slate-400 text-lg mb-8 max-w-2xl mx-auto">
+            <p className="text-[var(--text-secondary)] text-lg mb-8 max-w-2xl mx-auto">
               Tritt der Arkanum Akademie bei und beginne noch heute deine Reise zu tieferem Wissen und spirituellem Wachstum.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -104,7 +104,7 @@ export default function HomePage() {
               </Link>
               <Link
                 href="/kurse"
-                className="border border-[#2a2a3e] hover:border-violet-500 text-slate-300 hover:text-white font-semibold px-8 py-4 rounded-lg transition-all text-lg"
+                className="border border-[var(--border-strong)] hover:border-violet-500 text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-semibold px-8 py-4 rounded-lg transition-all text-lg"
               >
                 Kurse entdecken
               </Link>
