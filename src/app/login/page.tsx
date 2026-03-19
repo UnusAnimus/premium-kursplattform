@@ -139,7 +139,7 @@ function LoginForm() {
               />
               <span className="text-slate-400 text-sm">Angemeldet bleiben</span>
             </label>
-            <a href="#" className="text-violet-400 hover:text-violet-300 text-sm transition-colors">Passwort vergessen?</a>
+            <a href="/kontakt" className="text-violet-400 hover:text-violet-300 text-sm transition-colors">Passwort vergessen?</a>
           </div>
         )}
 

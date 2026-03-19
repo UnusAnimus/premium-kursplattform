@@ -2,6 +2,8 @@ import { courses } from '@/lib/data';
 import { formatPrice, formatDuration } from '@/lib/utils';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -15,6 +17,9 @@ export default async function CourseDetailPage({ params }: Props) {
   const { slug } = await params;
   const course = courses.find(c => c.slug === slug);
   if (!course) notFound();
+
+  const session = await getServerSession(authOptions);
+  const isLoggedIn = !!session?.user;
 
   const totalDuration = course.modules.reduce((acc, mod) =>
     acc + mod.lessons.reduce((a, l) => a + l.duration, 0), 0
@@ -88,10 +93,10 @@ export default async function CourseDetailPage({ params }: Props) {
                   </p>
                 )}
                 <Link
-                  href="/login"
+                  href={isLoggedIn ? '/meine-kurse' : '/login'}
                   className="block w-full bg-violet-600 hover:bg-violet-700 text-white font-semibold py-4 rounded-xl text-center transition-all hover:shadow-lg hover:shadow-violet-500/30 mb-3"
                 >
-                  Jetzt einschreiben ✦
+                  {isLoggedIn ? 'Kurs fortsetzen ✦' : 'Jetzt einschreiben ✦'}
                 </Link>
                 <Link
                   href="/preise"
