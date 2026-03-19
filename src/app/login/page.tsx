@@ -35,7 +35,41 @@ function LoginForm() {
         setError('Das Passwort muss mindestens 8 Zeichen lang sein.');
         return;
       }
-      setError('Die Registrierung ist derzeit nur auf Einladung verfügbar. Wende dich an den Administrator.');
+
+      setLoading(true);
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password }),
+        });
+
+        const data = await res.json() as { error?: string };
+
+        if (!res.ok) {
+          setError(data.error ?? 'Registrierung fehlgeschlagen.');
+          return;
+        }
+
+        // Auto-login after successful registration
+        const result = await signIn('credentials', {
+          email,
+          password,
+          redirect: false,
+          callbackUrl,
+        });
+
+        if (result?.error) {
+          setError('Registrierung erfolgreich, aber automatische Anmeldung fehlgeschlagen. Bitte melde dich manuell an.');
+          setMode('login');
+        } else if (result?.url) {
+          router.push(result.url);
+        }
+      } catch {
+        setError('Ein Fehler ist aufgetreten. Bitte versuche es erneut.');
+      } finally {
+        setLoading(false);
+      }
       return;
     }
 

@@ -1,24 +1,14 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
+import { prisma } from '@/lib/prisma';
 
-// Super Admin and default users
+// Super Admin configuration
 // To configure the Super Admin, set SUPER_ADMIN_EMAIL and SUPER_ADMIN_PASSWORD
 // in your .env.local file.
 const SUPER_ADMIN_EMAIL = process.env.SUPER_ADMIN_EMAIL || 'admin@arkanum-akademie.de';
 const SUPER_ADMIN_PASSWORD_HASH = process.env.SUPER_ADMIN_PASSWORD_HASH || '';
 const SUPER_ADMIN_NAME = process.env.SUPER_ADMIN_NAME || 'Super Administrator';
-
-// Simple in-memory user store. Replace with a real database in production.
-const users = [
-  {
-    id: 'superadmin-1',
-    name: SUPER_ADMIN_NAME,
-    email: SUPER_ADMIN_EMAIL,
-    role: 'admin' as const,
-    passwordHash: SUPER_ADMIN_PASSWORD_HASH,
-  },
-];
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -33,34 +23,48 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const user = users.find(
-          (u) => u.email.toLowerCase() === credentials.email.toLowerCase()
-        );
+        const emailLower = credentials.email.toLowerCase();
 
-        if (!user) {
+        // Check super admin first (env-configured, no DB required)
+        if (emailLower === SUPER_ADMIN_EMAIL.toLowerCase()) {
+          const plainFallback = process.env.SUPER_ADMIN_PLAIN_PASSWORD;
+          let passwordValid = false;
+
+          if (SUPER_ADMIN_PASSWORD_HASH) {
+            passwordValid = await bcrypt.compare(credentials.password, SUPER_ADMIN_PASSWORD_HASH);
+          } else if (plainFallback && process.env.NODE_ENV !== 'production') {
+            passwordValid = credentials.password === plainFallback;
+          }
+
+          if (!passwordValid) return null;
+
+          return {
+            id: 'superadmin-1',
+            name: SUPER_ADMIN_NAME,
+            email: SUPER_ADMIN_EMAIL,
+            role: 'admin',
+          };
+        }
+
+        // Check database for regular users
+        const dbUser = await prisma.user.findUnique({
+          where: { email: emailLower },
+        });
+
+        if (!dbUser || !dbUser.passwordHash) {
           return null;
         }
 
-        // If no password hash is set (first run), allow login with the
-        // SUPER_ADMIN_PLAIN_PASSWORD env variable (dev convenience only).
-        const plainFallback = process.env.SUPER_ADMIN_PLAIN_PASSWORD;
-        let passwordValid = false;
-
-        if (user.passwordHash) {
-          passwordValid = await bcrypt.compare(credentials.password, user.passwordHash);
-        } else if (plainFallback && user.role === 'admin' && process.env.NODE_ENV !== 'production') {
-          passwordValid = credentials.password === plainFallback;
-        }
-
+        const passwordValid = await bcrypt.compare(credentials.password, dbUser.passwordHash);
         if (!passwordValid) {
           return null;
         }
 
         return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
+          id: dbUser.id,
+          name: dbUser.name,
+          email: dbUser.email,
+          role: dbUser.role,
         };
       },
     }),
