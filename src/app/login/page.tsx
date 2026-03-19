@@ -130,8 +130,8 @@ function LoginForm() {
         {mode === 'register' && (
           <Input label="Vollständiger Name" type="text" placeholder="Max Mustermann" value={name} onChange={e => setName(e.target.value)} required />
         )}
-        <Input label="E-Mail-Adresse" type="email" placeholder="max@example.com" value={email} onChange={e => setEmail(e.target.value)} required />
-        <Input label="Passwort" type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required />
+        <Input label="E-Mail-Adresse" type="email" placeholder="max@example.com" value={email} onChange={e => setEmail(e.target.value)} required data-testid="login-email" />
+        <Input label="Passwort" type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required data-testid="login-password" />
         {mode === 'register' && (
           <Input label="Passwort bestätigen" type="password" placeholder="••••••••" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required />
         )}
@@ -154,6 +154,7 @@ function LoginForm() {
         <button
           type="submit"
           disabled={loading}
+          data-testid="login-submit"
           className="w-full bg-violet-600 hover:bg-violet-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-3.5 rounded-xl transition-all hover:shadow-lg hover:shadow-violet-500/30 flex items-center justify-center gap-2"
         >
           {loading ? (

@@ -99,6 +99,61 @@ src/
 
 ---
 
+## 🧪 Automatisierte Tests (E2E mit Playwright)
+
+Die Test-Suite deckt die kritischen User-Flows ab: **Gast**, **Member** und **Admin**.
+
+### Testübersicht
+
+| Datei | Scope |
+|---|---|
+| `tests/e2e/guest.spec.ts` | A – Gast-Navigation, öffentliche Seiten, Redirect-Schutz |
+| `tests/e2e/member.spec.ts` | B – Member-Login, Dashboard, Logout, Rollen-Navbar |
+| `tests/e2e/admin.spec.ts` | C – Admin-Login, Admin-Bereich, Admin-Navigation |
+| `tests/e2e/redirects.spec.ts` | D – Middleware-Schutz, Login-Redirects, Host-Validierung |
+
+### Lokal testen
+
+**Voraussetzungen:**
+- PostgreSQL-Datenbank läuft lokal (oder `.env.test.local` angepasst)
+- Chromium-Browser für Playwright installiert
+
+```bash
+# 1. Playwright-Browser installieren (einmalig)
+npx playwright install chromium --with-deps
+
+# 2. Test-Umgebungsvariablen konfigurieren
+cp .env.test.example .env.test.local
+# → .env.test.local anpassen (DB, Admin-Passwort etc.)
+
+# 3. Datenbank vorbereiten und Testdaten einspielen
+npx prisma migrate deploy
+npm run db:seed
+
+# 4. Produktions-Build erstellen und starten
+npm run build
+npm start &
+
+# 5. E2E-Tests ausführen
+npm run test:e2e
+
+# Optional: Interaktive UI
+npm run test:e2e:ui
+
+# Optional: HTML-Report anzeigen
+npm run test:e2e:report
+```
+
+### In GitHub Actions (CI)
+
+Bei jedem **Push** und **Pull Request** läuft automatisch:
+1. **Lint & Build** – ESLint + `next build`
+2. **E2E Tests** – Playwright gegen einen PostgreSQL-Service-Container
+
+Der Workflow ist in `.github/workflows/ci.yml` konfiguriert.
+
+---
+
 ## 🏗️ Was noch fehlt (Roadmap)
 
 Die Plattform ist ein UI-Prototyp. Folgende Features fehlen noch für den Produktionsbetrieb:
