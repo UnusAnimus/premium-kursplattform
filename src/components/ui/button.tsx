@@ -1,30 +1,42 @@
-import React from 'react';
+import { ButtonHTMLAttributes, forwardRef } from 'react';
+import { cn } from '@/lib/utils';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
-  size?: 'sm' | 'md' | 'lg';
-  children: React.ReactNode;
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive';
+  size?: 'sm' | 'md' | 'lg' | 'icon';
 }
 
-export function Button({ variant = 'primary', size = 'md', children, className = '', ...props }: ButtonProps) {
-  const base = 'inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 focus:ring-offset-transparent disabled:opacity-50 disabled:cursor-not-allowed';
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant = 'primary', size = 'md', children, ...props }, ref) => {
+    const base = 'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 disabled:opacity-50 disabled:pointer-events-none';
 
-  const variants = {
-    primary: 'bg-violet-600 hover:bg-violet-700 text-white shadow-lg hover:shadow-violet-500/25',
-    secondary: 'bg-amber-500 hover:bg-amber-600 text-white shadow-lg hover:shadow-amber-500/25',
-    outline: 'border border-violet-500 text-violet-400 hover:bg-violet-500/10',
-    ghost: 'text-slate-300 hover:text-white hover:bg-white/10',
-  };
+    const variants = {
+      primary: 'bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white shadow-lg hover:shadow-violet-500/25 active:scale-[0.98]',
+      secondary: 'bg-gradient-to-r from-amber-600 to-orange-500 hover:from-amber-500 hover:to-orange-400 text-white shadow-lg hover:shadow-amber-500/25 active:scale-[0.98]',
+      outline: 'border border-[var(--border-strong)] text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] hover:border-violet-500/50 active:scale-[0.98]',
+      ghost: 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] active:scale-[0.98]',
+      destructive: 'bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white shadow-lg hover:shadow-red-500/25 active:scale-[0.98]',
+    };
 
-  const sizes = {
-    sm: 'px-3 py-1.5 text-sm',
-    md: 'px-5 py-2.5 text-sm',
-    lg: 'px-8 py-3.5 text-base',
-  };
+    const sizes = {
+      sm: 'text-sm px-3 py-1.5 gap-1.5',
+      md: 'text-sm px-4 py-2 gap-2',
+      lg: 'text-base px-6 py-3 gap-2',
+      icon: 'p-2 w-9 h-9',
+    };
 
-  return (
-    <button className={`${base} ${variants[variant]} ${sizes[size]} ${className}`} {...props}>
-      {children}
-    </button>
-  );
-}
+    return (
+      <button
+        ref={ref}
+        className={cn(base, variants[variant], sizes[size], className)}
+        {...props}
+      >
+        {children}
+      </button>
+    );
+  }
+);
+Button.displayName = 'Button';
+export { Button };
+export type { ButtonProps };
+

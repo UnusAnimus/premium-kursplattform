@@ -7,14 +7,14 @@ const stats = [
 
 export function Stats() {
   return (
-    <section className="py-20 border-y border-[#1e1e2e] bg-[#13131a]/50">
+    <section className="py-20 border-y border-[var(--border-base)] bg-[var(--bg-surface)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {stats.map((stat, i) => (
             <div key={i} className="text-center">
               <div className="text-3xl text-violet-400 mb-3">{stat.icon}</div>
-              <div className="text-4xl font-bold text-white mb-2">{stat.value}</div>
-              <div className="text-slate-400 text-sm">{stat.label}</div>
+              <div className="text-4xl font-bold gradient-text mb-2">{stat.value}</div>
+              <div className="text-[var(--text-secondary)] text-sm">{stat.label}</div>
             </div>
           ))}
         </div>
@@ -22,3 +22,4 @@ export function Stats() {
     </section>
   );
 }
+

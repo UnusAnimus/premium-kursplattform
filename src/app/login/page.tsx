@@ -95,18 +95,18 @@ function LoginForm() {
   };
 
   return (
-    <div className="bg-[#13131a] border border-[#1e1e2e] rounded-2xl p-8">
+    <div className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-2xl p-8">
       {/* Toggle */}
-      <div className="flex bg-[#0a0a0f] rounded-xl p-1 mb-8">
+      <div className="flex bg-[var(--bg-base)] rounded-xl p-1 mb-8">
         <button
           onClick={() => { setMode('login'); setError(null); }}
-          className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${mode === 'login' ? 'bg-violet-600 text-white' : 'text-slate-400 hover:text-white'}`}
+          className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${mode === 'login' ? 'bg-violet-600 text-white' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
         >
           Anmelden
         </button>
         <button
           onClick={() => { setMode('register'); setError(null); }}
-          className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${mode === 'register' ? 'bg-violet-600 text-white' : 'text-slate-400 hover:text-white'}`}
+          className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${mode === 'register' ? 'bg-violet-600 text-white' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
         >
           Registrieren
         </button>
@@ -137,7 +137,7 @@ function LoginForm() {
                 onChange={e => setRemember(e.target.checked)}
                 className="accent-violet-600"
               />
-              <span className="text-slate-400 text-sm">Angemeldet bleiben</span>
+              <span className="text-[var(--text-secondary)] text-sm">Angemeldet bleiben</span>
             </label>
             <a href="/kontakt" className="text-violet-400 hover:text-violet-300 text-sm transition-colors">Passwort vergessen?</a>
           </div>
@@ -161,9 +161,9 @@ function LoginForm() {
 
       {/* Divider */}
       <div className="flex items-center gap-4 my-6">
-        <div className="flex-1 h-px bg-[#1e1e2e]" />
-        <span className="text-slate-500 text-xs">oder</span>
-        <div className="flex-1 h-px bg-[#1e1e2e]" />
+        <div className="flex-1 h-px bg-[var(--border-base)]" />
+        <span className="text-[var(--text-muted)] text-xs">oder</span>
+        <div className="flex-1 h-px bg-[var(--border-base)]" />
       </div>
 
       {/* Social logins */}
@@ -175,7 +175,7 @@ function LoginForm() {
           <button
             key={i}
             disabled
-            className="w-full border border-[#1e1e2e] text-slate-500 py-3 rounded-xl text-sm font-medium flex items-center justify-center gap-3 opacity-50 cursor-not-allowed"
+            className="w-full border border-[var(--border-base)] text-[var(--text-muted)] py-3 rounded-xl text-sm font-medium flex items-center justify-center gap-3 opacity-50 cursor-not-allowed"
             title="Demnächst verfügbar"
           >
             <span className={`font-bold ${social.color}`}>{social.icon}</span>
@@ -190,10 +190,10 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center p-4">
       {/* Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-violet-600/5 rounded-full blur-3xl" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-violet-600/10 rounded-full blur-3xl" />
         <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-amber-500/5 rounded-full blur-3xl" />
       </div>
 
@@ -201,16 +201,18 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2">
-            <span className="text-3xl text-violet-400">⬡</span>
-            <span className="font-bold text-white text-xl">Arkanum Akademie</span>
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 to-purple-700 flex items-center justify-center">
+              <span className="text-white font-bold">A</span>
+            </div>
+            <span className="font-bold text-[var(--text-primary)] text-xl">Arkanum Akademie</span>
           </Link>
         </div>
 
-        <Suspense fallback={<div className="bg-[#13131a] border border-[#1e1e2e] rounded-2xl p-8 text-center text-slate-400">Laden…</div>}>
+        <Suspense fallback={<div className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-2xl p-8 text-center text-[var(--text-muted)]">Laden…</div>}>
           <LoginForm />
         </Suspense>
 
-        <p className="text-center text-slate-500 text-xs mt-6">
+        <p className="text-center text-[var(--text-muted)] text-xs mt-6">
           Mit der Anmeldung stimmst du unseren{' '}
           <a href="#" className="text-violet-400 hover:text-violet-300">AGB</a> und der{' '}
           <a href="#" className="text-violet-400 hover:text-violet-300">Datenschutzerklärung</a> zu.
