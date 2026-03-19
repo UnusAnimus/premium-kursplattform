@@ -83,7 +83,8 @@ test.describe('Admin – Accessing protected admin sub-routes', () => {
   for (const route of adminRoutes) {
     test(`admin can access ${route}`, async ({ page }) => {
       await page.goto(route);
-      await expect(page).toHaveURL(new RegExp(route.replace(/\//g, '\\/')));
+      // Verify we stay on the expected route (not redirected to login or dashboard)
+      expect(page.url()).toContain(route);
       expect(page.url()).not.toContain('/login');
       expect(page.url()).not.toContain('/dashboard');
     });
