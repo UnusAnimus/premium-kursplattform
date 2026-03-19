@@ -72,7 +72,7 @@ export function Footer() {
                 { href: '#', label: 'AGB' },
                 { href: '#', label: 'Widerruf' },
               ].map(link => (
-                <li key={link.href}>
+                <li key={link.label}>
                   <Link href={link.href} className="text-slate-400 hover:text-violet-300 text-sm transition-colors">
                     {link.label}
                   </Link>
