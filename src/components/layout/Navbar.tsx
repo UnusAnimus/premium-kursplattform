@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useSession, signOut } from 'next-auth/react';
 import { useTheme } from '@/hooks/useTheme';
 import { Button } from '@/components/ui/button';
 import { Sun, Moon, Menu, X } from 'lucide-react';
@@ -9,6 +10,10 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { isDark, toggleTheme } = useTheme();
+  const { data: session } = useSession();
+
+  const isLoggedIn = !!session?.user;
+  const isAdmin = session?.user?.role === 'admin';
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -61,16 +66,43 @@ export function Navbar() {
             >
               {isDark ? <Sun size={18} /> : <Moon size={18} />}
             </button>
-            <Link href="/login">
-              <Button variant="ghost" size="sm" className="hidden sm:flex text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
-                Anmelden
-              </Button>
-            </Link>
-            <Link href="/login">
-              <Button size="sm" className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white shadow-lg hover:shadow-violet-500/25">
-                Kostenlos starten
-              </Button>
-            </Link>
+            {isLoggedIn ? (
+              <>
+                <Link href={isAdmin ? '/admin' : '/dashboard'}>
+                  <Button variant="ghost" size="sm" className="hidden sm:flex text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
+                    {isAdmin ? 'Admin-Bereich' : 'Dashboard'}
+                  </Button>
+                </Link>
+                {!isAdmin && (
+                  <Link href="/meine-kurse">
+                    <Button variant="ghost" size="sm" className="hidden sm:flex text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
+                      Meine Kurse
+                    </Button>
+                  </Link>
+                )}
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="hidden sm:flex text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                  onClick={() => signOut({ callbackUrl: '/' })}
+                >
+                  Abmelden
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link href="/login">
+                  <Button variant="ghost" size="sm" className="hidden sm:flex text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
+                    Anmelden
+                  </Button>
+                </Link>
+                <Link href="/login">
+                  <Button size="sm" className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white shadow-lg hover:shadow-violet-500/25">
+                    Kostenlos starten
+                  </Button>
+                </Link>
+              </>
+            )}
             <button
               className="md:hidden p-2 rounded-xl text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)] transition-colors"
               onClick={() => setMenuOpen(!menuOpen)}
@@ -82,7 +114,7 @@ export function Navbar() {
         </div>
 
         {/* Mobile menu */}
-        <div className={`md:hidden overflow-hidden transition-all duration-300 ${menuOpen ? 'max-h-64 pb-4' : 'max-h-0'}`}>
+        <div className={`md:hidden overflow-hidden transition-all duration-300 ${menuOpen ? 'max-h-80 pb-4' : 'max-h-0'}`}>
           <div className="flex flex-col gap-1 pt-2 border-t border-[var(--border-base)]">
             {navLinks.map(link => (
               <Link
@@ -94,9 +126,36 @@ export function Navbar() {
                 {link.label}
               </Link>
             ))}
-            <Link href="/login" className="px-4 py-3 text-sm font-medium text-violet-400 hover:text-violet-300 rounded-xl transition-colors" onClick={() => setMenuOpen(false)}>
-              Anmelden / Registrieren
-            </Link>
+            {isLoggedIn ? (
+              <>
+                <Link
+                  href={isAdmin ? '/admin' : '/dashboard'}
+                  className="px-4 py-3 text-sm font-medium text-violet-400 hover:text-violet-300 rounded-xl transition-colors"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {isAdmin ? 'Admin-Bereich' : 'Dashboard'}
+                </Link>
+                {!isAdmin && (
+                  <Link
+                    href="/meine-kurse"
+                    className="px-4 py-3 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] rounded-xl transition-colors"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Meine Kurse
+                  </Link>
+                )}
+                <button
+                  className="px-4 py-3 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] rounded-xl transition-colors text-left"
+                  onClick={() => { setMenuOpen(false); signOut({ callbackUrl: '/' }); }}
+                >
+                  Abmelden
+                </button>
+              </>
+            ) : (
+              <Link href="/login" className="px-4 py-3 text-sm font-medium text-violet-400 hover:text-violet-300 rounded-xl transition-colors" onClick={() => setMenuOpen(false)}>
+                Anmelden / Registrieren
+              </Link>
+            )}
           </div>
         </div>
       </div>

@@ -1,4 +1,6 @@
+'use client';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import type { PricingPlan } from '@/lib/types';
 import { formatPrice } from '@/lib/utils';
 
@@ -7,6 +9,14 @@ interface PricingCardProps {
 }
 
 export function PricingCard({ plan }: PricingCardProps) {
+  const { data: session } = useSession();
+  const isLoggedIn = !!session?.user;
+  const isAdmin = session?.user?.role === 'admin';
+
+  const ctaHref = isLoggedIn
+    ? isAdmin ? '/admin' : '/dashboard'
+    : '/login';
+
   return (
     <div className={`relative rounded-2xl p-8 flex flex-col transition-all duration-300 hover:-translate-y-1 ${
       plan.highlighted
@@ -50,7 +60,7 @@ export function PricingCard({ plan }: PricingCardProps) {
       </ul>
 
       <Link
-        href="/login"
+        href={ctaHref}
         className={`w-full text-center font-semibold py-3.5 rounded-xl transition-all ${
           plan.highlighted
             ? 'bg-violet-600 hover:bg-violet-700 text-white shadow-lg hover:shadow-violet-500/30'
