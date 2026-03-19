@@ -1,7 +1,29 @@
+'use client';
 import Link from 'next/link';
+import { useSession, signOut } from 'next-auth/react';
 
 export function Footer() {
   const year = new Date().getFullYear();
+  const { data: session } = useSession();
+  const isLoggedIn = !!session?.user;
+  const isAdmin = session?.user?.role === 'admin';
+
+  const akademieLinks = [
+    { href: '/ueber-uns', label: 'Über uns' },
+    { href: '/preise', label: 'Preise' },
+    { href: '/kontakt', label: 'Kontakt' },
+  ];
+
+  if (isLoggedIn) {
+    if (isAdmin) {
+      akademieLinks.push({ href: '/admin', label: 'Admin-Bereich' });
+    } else {
+      akademieLinks.push({ href: '/dashboard', label: 'Mitgliederbereich' });
+    }
+  } else {
+    akademieLinks.push({ href: '/login', label: 'Mitglied werden' });
+  }
+
   return (
     <footer className="bg-[var(--bg-surface)] border-t border-[var(--border-base)] mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -49,18 +71,23 @@ export function Footer() {
           <div>
             <h3 className="font-semibold text-[var(--text-primary)] mb-4">Akademie</h3>
             <ul className="space-y-3">
-              {[
-                { href: '/ueber-uns', label: 'Über uns' },
-                { href: '/preise', label: 'Preise' },
-                { href: '/kontakt', label: 'Kontakt' },
-                { href: '/dashboard', label: 'Mitgliederbereich' },
-              ].map(link => (
+              {akademieLinks.map(link => (
                 <li key={link.href}>
                   <Link href={link.href} className="text-[var(--text-secondary)] hover:text-violet-400 text-sm transition-colors">
                     {link.label}
                   </Link>
                 </li>
               ))}
+              {isLoggedIn && (
+                <li>
+                  <button
+                    onClick={() => signOut({ callbackUrl: '/' })}
+                    className="text-[var(--text-secondary)] hover:text-violet-400 text-sm transition-colors"
+                  >
+                    Abmelden
+                  </button>
+                </li>
+              )}
             </ul>
           </div>
 
