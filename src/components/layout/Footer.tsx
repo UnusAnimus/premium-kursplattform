@@ -67,12 +67,12 @@ export function Footer() {
             <h3 className="font-semibold text-white mb-4">Rechtliches</h3>
             <ul className="space-y-3">
               {[
-                { href: '#', label: 'Impressum' },
-                { href: '#', label: 'Datenschutz' },
-                { href: '#', label: 'AGB' },
-                { href: '#', label: 'Widerruf' },
+                { id: 'impressum', href: '#', label: 'Impressum' },
+                { id: 'datenschutz', href: '#', label: 'Datenschutz' },
+                { id: 'agb', href: '#', label: 'AGB' },
+                { id: 'widerruf', href: '#', label: 'Widerruf' },
               ].map(link => (
-                <li key={link.label}>
+                <li key={link.id}>
                   <Link href={link.href} className="text-slate-400 hover:text-violet-300 text-sm transition-colors">
                     {link.label}
                   </Link>
