@@ -123,7 +123,10 @@ export default function ProfilPage() {
         ) : (
           <div className="border-t border-[#1e1e2e] pt-6">
             <h3 className="text-slate-400 text-sm font-medium mb-2">Bio</h3>
-            <p className="text-slate-300">{bio || <span className="text-slate-500 italic">Noch keine Bio angegeben.</span>}</p>
+            {bio
+              ? <p className="text-slate-300">{bio}</p>
+              : <p className="text-slate-500 italic">Noch keine Bio angegeben.</p>
+            }
           </div>
         )}
       </div>

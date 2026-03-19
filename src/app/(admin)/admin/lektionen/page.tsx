@@ -41,7 +41,7 @@ export default function AdminLektionenPage() {
     if (!editingLesson) return;
     setLessons(prev => prev.map(l =>
       l.id === editingLesson.id
-        ? { ...l, title: formData.title, description: formData.description, duration: parseInt(formData.duration, 10) || l.duration, isFree: formData.isFree }
+        ? { ...l, title: formData.title, description: formData.description, duration: (() => { const p = parseInt(formData.duration, 10); return isNaN(p) ? l.duration : p; })(), isFree: formData.isFree }
         : l
     ));
     setEditingLesson(null);

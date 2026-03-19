@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 export default function DashboardPage() {
   const { data: session } = useSession();
-  const userName = session?.user?.name ?? 'zurück';
+  const userName = session?.user?.name ?? 'Nutzer';
 
   // Show the first 3 courses as placeholder enrolled courses
   const enrolledCourses = courses.slice(0, 3);

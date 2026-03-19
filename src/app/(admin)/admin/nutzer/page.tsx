@@ -51,7 +51,8 @@ export default function AdminNutzerPage() {
       });
       const data = await res.json() as { user?: DBUser; error?: string };
       if (data.user) {
-        setUsers(prev => prev.map(u => u.id === userId ? { ...u, role: data.user!.role } : u));
+        const updatedRole = data.user.role;
+        setUsers(prev => prev.map(u => u.id === userId ? { ...u, role: updatedRole } : u));
       }
     } catch {
       // ignore

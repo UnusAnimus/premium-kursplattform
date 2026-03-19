@@ -35,12 +35,13 @@ export default function AdminKursePage() {
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     if (editingCourse) {
-      setCourses(prev => prev.map(c =>
-        c.id === editingCourse.id
-          ? { ...c, title: formData.title, instructor: formData.instructor, category: formData.category, price: parseFloat(formData.price) || c.price }
-          : c
-      ));
+      setCourses(prev => prev.map(c => {
+        if (c.id !== editingCourse.id) return c;
+        const parsed = parseFloat(formData.price);
+        return { ...c, title: formData.title, instructor: formData.instructor, category: formData.category, price: isNaN(parsed) ? c.price : parsed };
+      }));
     } else {
+      const parsedPrice = parseFloat(formData.price);
       const newCourse: CourseEntry = {
         id: `local-${Date.now()}`,
         slug: formData.title.toLowerCase().replace(/\s+/g, '-'),
@@ -48,7 +49,7 @@ export default function AdminKursePage() {
         instructor: formData.instructor,
         category: formData.category,
         level: 'Anfänger',
-        price: parseFloat(formData.price) || 0,
+        price: isNaN(parsedPrice) ? 0 : parsedPrice,
         studentsCount: 0,
         rating: 0,
       };
