@@ -28,14 +28,15 @@ export default async function CourseDetailPage({ params }: Props) {
   // Check enrollment status and get first lesson ID from DB
   let isEnrolled = false;
   let firstLessonId: string | null = null;
+  const userId = session?.user?.id;
 
-  if (isLoggedIn) {
+  if (userId) {
     try {
       const dbCourse = await prisma.course.findUnique({
         where: { slug },
         include: {
           enrollments: {
-            where: { userId: session.user.id! },
+            where: { userId },
           },
           modules: {
             orderBy: { order: 'asc' },

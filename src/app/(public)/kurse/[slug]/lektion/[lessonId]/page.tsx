@@ -14,7 +14,8 @@ export default async function LessonPlayerPage({ params }: Props) {
   const { slug, lessonId } = await params;
 
   const session = await getServerSession(authOptions);
-  if (!session?.user?.id) {
+  const userId = session?.user?.id;
+  if (!userId) {
     redirect(`/login?callbackUrl=/kurse/${slug}/lektion/${lessonId}`);
   }
 
@@ -33,7 +34,7 @@ export default async function LessonPlayerPage({ params }: Props) {
                 },
               },
               enrollments: {
-                where: { userId: session.user.id! },
+                where: { userId },
               },
             },
           },

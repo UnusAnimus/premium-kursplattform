@@ -66,6 +66,7 @@ export default function MeineKursePage() {
                 <h3 className="text-white font-semibold mt-3 mb-1">{enrollment.course.title}</h3>
                 <p className="text-slate-500 text-xs mb-4">von {enrollment.course.instructor}</p>
                 <Progress value={0} showValue label="Fortschritt" className="mb-4" />
+                {/* TODO: Progress tracking will be implemented once lesson completion events are stored */}
                 <Link
                   href={`/kurse/${enrollment.course.slug}`}
                   className="block w-full text-center bg-violet-600/20 hover:bg-violet-600 text-violet-300 hover:text-white text-sm font-medium py-2.5 rounded-lg border border-violet-500/30 hover:border-violet-600 transition-all"

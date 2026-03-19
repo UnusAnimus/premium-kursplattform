@@ -175,9 +175,11 @@ export default function AdminKursePage() {
 
   const f = (field: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const val = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
-    setForm(p => ({ ...p, [field]: val }));
     if (field === 'title' && !editingId) {
+      // Auto-generate slug only when creating new courses
       setForm(p => ({ ...p, title: e.target.value as string, slug: slugify(e.target.value as string) }));
+    } else {
+      setForm(p => ({ ...p, [field]: val }));
     }
   };
 
