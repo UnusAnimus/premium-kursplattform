@@ -199,6 +199,16 @@ export function Navbar() {
                 >
                   {isAdmin ? 'Admin-Bereich' : 'Dashboard'}
                 </Link>
+                {!isAdmin && (
+                  <Link
+                    href="/meine-kurse"
+                    className="px-2 py-3 text-xs font-semibold tracking-widest uppercase"
+                    style={{ color: 'var(--pearl-muted)' }}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Meine Kurse
+                  </Link>
+                )}
                 <button
                   className="px-2 py-3 text-xs font-semibold tracking-widest uppercase text-left"
                   style={{ color: 'var(--pearl-muted)' }}

@@ -26,7 +26,7 @@ export function VoicesSection() {
       {/* Background orb */}
       <div
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] pointer-events-none"
-        aria-hidden
+        aria-hidden="true"
         style={{
           background: 'radial-gradient(ellipse, rgba(61,26,138,0.1) 0%, transparent 70%)',
           filter: 'blur(40px)',

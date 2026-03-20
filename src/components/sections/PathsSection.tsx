@@ -58,7 +58,7 @@ export function PathsSection() {
       {/* Subtle cross-hatch texture */}
       <div
         className="absolute inset-0 opacity-[0.025] pointer-events-none"
-        aria-hidden
+        aria-hidden="true"
         style={{
           backgroundImage: `
             linear-gradient(rgba(201,168,76,0.5) 1px, transparent 1px),
