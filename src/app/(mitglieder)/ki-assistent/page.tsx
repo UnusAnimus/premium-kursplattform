@@ -15,6 +15,7 @@ export default function KiAssistentPage() {
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const suggestions = [
@@ -29,28 +30,47 @@ export default function KiAssistentPage() {
   }, [messages, isTyping]);
 
   const sendMessage = async (text: string) => {
-    if (!text.trim()) return;
-    const userMsg: ChatMessage = { id: Date.now().toString(), role: 'user', content: text, timestamp: new Date().toISOString() };
-    setMessages(prev => [...prev, userMsg]);
+    if (!text.trim() || isTyping) return;
+
+    setError(null);
+    const userMsg: ChatMessage = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: text.trim(),
+      timestamp: new Date().toISOString(),
+    };
+    const updatedMessages = [...messages, userMsg];
+    setMessages(updatedMessages);
     setInput('');
     setIsTyping(true);
 
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      const res = await fetch('/api/ki/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: updatedMessages.map(m => ({ role: m.role, content: m.content })),
+        }),
+      });
 
-    const responses = [
-      'Das ist eine tiefgründige Frage! In der Metaphysik versteht man darunter... Die Verbindung zwischen Geist und Materie zeigt sich dabei besonders deutlich in der Quantenphysik, die belegt, dass Beobachtung die Realität beeinflusst.',
-      'Ausgezeichnete Frage! In unserem Kurs "Metaphysik & Bewusstsein" wird genau dieses Thema von Dr. Elena Mystika behandelt. Das Grundprinzip basiert auf der Idee, dass Bewusstsein das fundamentale Substrat der Realität ist.',
-      'Sehr interessant! Diese Konzepte wurzeln in jahrtausendealten Traditionen, die erst jetzt durch moderne Wissenschaft bestätigt werden. Ich empfehle dir, Modul 2 in unserem Hermetik-Kurs anzuschauen.',
-    ];
+      const data = await res.json() as { content?: string; error?: string };
 
-    const aiMsg: ChatMessage = {
-      id: (Date.now() + 1).toString(),
-      role: 'assistant',
-      content: responses[Math.floor(Math.random() * responses.length)],
-      timestamp: new Date().toISOString(),
-    };
-    setIsTyping(false);
-    setMessages(prev => [...prev, aiMsg]);
+      if (!res.ok || !data.content) {
+        setError(data.error ?? 'Unbekannter Fehler. Bitte versuche es erneut.');
+      } else {
+        const aiMsg: ChatMessage = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: data.content,
+          timestamp: new Date().toISOString(),
+        };
+        setMessages(prev => [...prev, aiMsg]);
+      }
+    } catch {
+      setError('Verbindungsfehler. Bitte überprüfe deine Internetverbindung und versuche es erneut.');
+    } finally {
+      setIsTyping(false);
+    }
   };
 
   return (
@@ -86,6 +106,14 @@ export default function KiAssistentPage() {
                 {[0, 1, 2].map(i => (
                   <span key={i} className="w-2 h-2 bg-violet-400 rounded-full animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
                 ))}
+              </div>
+            </div>
+          )}
+          {error && (
+            <div className="flex gap-3">
+              <div className="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center text-sm text-red-400 flex-shrink-0">!</div>
+              <div className="max-w-[80%] px-4 py-3 rounded-2xl text-sm bg-red-500/10 border border-red-500/20 text-red-300 rounded-tl-none">
+                {error}
               </div>
             </div>
           )}
