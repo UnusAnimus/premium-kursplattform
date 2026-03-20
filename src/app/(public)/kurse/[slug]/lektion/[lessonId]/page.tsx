@@ -20,7 +20,7 @@ export default async function LessonPlayerPage({ params }: Props) {
     redirect(`/login?callbackUrl=/kurse/${slug}/lektion/${lessonId}`);
   }
 
-  // Fetch lesson with module and course info
+  // Fetch lesson with module and course info (including completions for sidebar)
   const lesson = await prisma.lesson.findUnique({
     where: { id: lessonId },
     include: {
@@ -31,7 +31,12 @@ export default async function LessonPlayerPage({ params }: Props) {
               modules: {
                 orderBy: { order: 'asc' },
                 include: {
-                  lessons: { orderBy: { order: 'asc' } },
+                  lessons: {
+                    orderBy: { order: 'asc' },
+                    include: {
+                      completions: { where: { userId }, select: { id: true } },
+                    },
+                  },
                 },
               },
               enrollments: {
@@ -62,13 +67,10 @@ export default async function LessonPlayerPage({ params }: Props) {
 
   const isCompleted = lesson.completions.length > 0;
 
-  // Fetch all completions for this course to show in sidebar
-  const allLessonIds = course.modules.flatMap(m => m.lessons.map(l => l.id));
-  const completions = await prisma.lessonCompletion.findMany({
-    where: { userId, lessonId: { in: allLessonIds } },
-    select: { lessonId: true },
-  });
-  const completedSet = new Set(completions.map(c => c.lessonId));
+  // Build completed set from the already-fetched data (no extra DB query)
+  const completedSet = new Set(
+    course.modules.flatMap(m => m.lessons.flatMap(l => l.completions.map(() => l.id)))
+  );
 
   // Build flat lesson list for navigation
   const allLessons = course.modules.flatMap(m => m.lessons.map(l => ({ ...l, moduleTitle: m.title })));

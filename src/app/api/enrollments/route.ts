@@ -27,7 +27,13 @@ export async function GET() {
             modules: {
               select: {
                 lessons: {
-                  select: { id: true },
+                  select: {
+                    id: true,
+                    completions: {
+                      where: { userId: session.user.id },
+                      select: { id: true },
+                    },
+                  },
                 },
               },
             },
@@ -37,20 +43,10 @@ export async function GET() {
       orderBy: { enrolledAt: 'desc' },
     });
 
-    // Fetch completions for all lessons across all enrolled courses
-    const allLessonIds = enrollments.flatMap(e =>
-      e.course.modules.flatMap(m => m.lessons.map(l => l.id))
-    );
-    const completions = await prisma.lessonCompletion.findMany({
-      where: { userId: session.user.id, lessonId: { in: allLessonIds } },
-      select: { lessonId: true },
-    });
-    const completedSet = new Set(completions.map(c => c.lessonId));
-
     const result = enrollments.map(e => {
       const totalLessons = e.course.modules.reduce((sum, m) => sum + m.lessons.length, 0);
       const completedLessons = e.course.modules.reduce(
-        (sum, m) => sum + m.lessons.filter(l => completedSet.has(l.id)).length,
+        (sum, m) => sum + m.lessons.filter(l => l.completions.length > 0).length,
         0
       );
       return {

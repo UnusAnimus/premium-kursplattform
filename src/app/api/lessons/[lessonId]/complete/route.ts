@@ -17,29 +17,27 @@ export async function POST(_req: NextRequest, { params }: Params) {
   const { lessonId } = await params;
 
   try {
-    // Verify lesson exists and user is enrolled in the course
+    // Verify lesson exists
     const lesson = await prisma.lesson.findUnique({
       where: { id: lessonId },
-      include: {
-        module: {
-          include: {
-            course: {
-              include: {
-                enrollments: { where: { userId: session.user.id } },
-              },
-            },
-          },
-        },
-      },
+      include: { module: { select: { courseId: true } } },
     });
 
     if (!lesson) {
       return NextResponse.json({ error: 'Lektion nicht gefunden.' }, { status: 404 });
     }
 
-    const isEnrolled = lesson.module.course.enrollments.length > 0;
-    if (!lesson.isFree && !isEnrolled) {
-      return NextResponse.json({ error: 'Kein Zugriff auf diese Lektion.' }, { status: 403 });
+    // Check enrollment (only required for non-free lessons)
+    if (!lesson.isFree) {
+      const enrollment = await prisma.courseEnrollment.findUnique({
+        where: {
+          userId_courseId: { userId: session.user.id, courseId: lesson.module.courseId },
+        },
+        select: { id: true },
+      });
+      if (!enrollment) {
+        return NextResponse.json({ error: 'Kein Zugriff auf diese Lektion.' }, { status: 403 });
+      }
     }
 
     // Upsert completion (idempotent)
