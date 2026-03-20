@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Hero } from '@/components/sections/Hero';
 import { Stats } from '@/components/sections/Stats';
 import { Features } from '@/components/sections/Features';
@@ -20,10 +21,25 @@ export default async function HomePage() {
     ? courses.reduce((total, course) => total + course.rating, 0) / courses.length
     : 0;
 
+=======
+import { Hero }            from '@/components/sections/Hero';
+import { ManifestSection }  from '@/components/sections/ManifestSection';
+import { StatsSection }     from '@/components/sections/StatsSection';
+import { PathsSection }     from '@/components/sections/PathsSection';
+import { CourseShowcase }   from '@/components/sections/CourseShowcase';
+import { VoicesSection }    from '@/components/sections/VoicesSection';
+import { InitiationSection } from '@/components/sections/InitiationSection';
+import { InvocationSection } from '@/components/sections/InvocationSection';
+import { Navbar }           from '@/components/layout/Navbar';
+import { Footer }           from '@/components/layout/Footer';
+
+export default function HomePage() {
+>>>>>>> 97e4e65e75df818bf6d759ce825577b16afdcd31
   return (
     <>
       <Navbar />
       <main>
+<<<<<<< HEAD
         <Hero courseCount={courses.length} />
         <Stats courseCount={courses.length} averageRating={averageRating} />
         <Features />
@@ -101,8 +117,19 @@ export default async function HomePage() {
         </section>
 
         <CtaSection />
+=======
+        <Hero />
+        <StatsSection />
+        <ManifestSection />
+        <PathsSection />
+        <CourseShowcase />
+        <VoicesSection />
+        <InitiationSection />
+        <InvocationSection />
+>>>>>>> 97e4e65e75df818bf6d759ce825577b16afdcd31
       </main>
       <Footer />
     </>
   );
 }
+

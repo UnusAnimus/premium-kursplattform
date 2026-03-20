@@ -19,6 +19,16 @@ function createTransporter() {
   });
 }
 
+async function getDevTransporter(): Promise<{ transporter: nodemailer.Transporter; user: string }> {
+  const testAccount = await nodemailer.createTestAccount();
+  const transporter = nodemailer.createTransport({
+    host: 'smtp.ethereal.email',
+    port: 587,
+    auth: { user: testAccount.user, pass: testAccount.pass },
+  });
+  return { transporter, user: testAccount.user };
+}
+
 function passwordResetEmailHtml(resetUrl: string, userName: string): string {
   return `
 <!DOCTYPE html>
@@ -109,15 +119,10 @@ export async function sendPasswordResetEmail(
       throw new Error('SMTP is not configured. Please set SMTP_HOST, SMTP_USER, and SMTP_PASS.');
     }
 
-    const testAccount = await nodemailer.createTestAccount();
-    const devTransporter = nodemailer.createTransport({
-      host: 'smtp.ethereal.email',
-      port: 587,
-      auth: { user: testAccount.user, pass: testAccount.pass },
-    });
+    const { transporter: devTransporter, user: devFromAddr } = await getDevTransporter();
 
     const info = await devTransporter.sendMail({
-      from: `"Arkanum Akademie" <${testAccount.user}>`,
+      from: `"Arkanum Akademie" <${devFromAddr}>`,
       to: toEmail,
       subject: 'Passwort zurücksetzen – Arkanum Akademie',
       html: passwordResetEmailHtml(resetUrl, userName),
@@ -136,6 +141,88 @@ export async function sendPasswordResetEmail(
     subject: 'Passwort zurücksetzen – Arkanum Akademie',
     html: passwordResetEmailHtml(resetUrl, userName),
     text: `Hallo ${userName},\n\nKlicke auf folgenden Link, um dein Passwort zurückzusetzen (gültig für 60 Minuten):\n${resetUrl}\n\nFalls du diese Anfrage nicht gestellt hast, ignoriere diese E-Mail.`,
+  });
+
+  return { success: true };
+}
+
+// ---------------------------------------------------------------------------
+// Contact form email
+// ---------------------------------------------------------------------------
+
+export async function sendContactEmail(params: {
+  firstName: string;
+  lastName: string;
+  senderEmail: string;
+  subject: string;
+  message: string;
+}): Promise<{ success: boolean; previewUrl?: string }> {
+  const { firstName, lastName, senderEmail, subject, message } = params;
+  // CONTACT_EMAIL takes priority over SMTP_USER as the intended recipient
+  const recipientEmail = process.env.CONTACT_EMAIL ?? process.env.SMTP_USER ?? '';
+  const html = `<!DOCTYPE html>
+<html lang="de">
+<head><meta charset="UTF-8" /><title>Kontaktanfrage – Arkanum Akademie</title></head>
+<body style="margin:0;padding:0;background-color:#0f0f1a;font-family:'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0f0f1a;padding:40px 0;">
+    <tr><td align="center">
+      <table width="560" cellpadding="0" cellspacing="0" style="background-color:#1a1a2e;border-radius:16px;overflow:hidden;border:1px solid rgba(139,92,246,0.2);">
+        <tr><td style="background:linear-gradient(135deg,#7c3aed,#6d28d9);padding:24px 40px;">
+          <span style="font-size:18px;font-weight:700;color:#fff;">Arkanum Akademie – Neue Kontaktanfrage</span>
+        </td></tr>
+        <tr><td style="padding:32px 40px;">
+          <p style="margin:0 0 8px;color:#94a3b8;font-size:13px;">Von</p>
+          <p style="margin:0 0 20px;color:#f1f5f9;font-size:15px;font-weight:600;">${firstName} ${lastName} &lt;${senderEmail}&gt;</p>
+          <p style="margin:0 0 8px;color:#94a3b8;font-size:13px;">Betreff</p>
+          <p style="margin:0 0 20px;color:#f1f5f9;font-size:15px;">${subject}</p>
+          <p style="margin:0 0 8px;color:#94a3b8;font-size:13px;">Nachricht</p>
+          <p style="margin:0;color:#cbd5e1;font-size:15px;line-height:1.7;white-space:pre-line;">${message}</p>
+        </td></tr>
+        <tr><td style="padding:16px 40px;border-top:1px solid rgba(139,92,246,0.1);text-align:center;">
+          <p style="margin:0;color:#334155;font-size:12px;">© ${new Date().getFullYear()} Arkanum Akademie. Alle Rechte vorbehalten.</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+
+  const text = `Neue Kontaktanfrage\n\nVon: ${firstName} ${lastName} <${senderEmail}>\nBetreff: ${subject}\n\n${message}`;
+
+  const transporter = createTransporter();
+
+  if (!transporter) {
+    if (process.env.NODE_ENV === 'production') {
+      // In production without SMTP, log and return success to avoid leaking config state to users.
+      console.error('[kontakt] SMTP nicht konfiguriert – Kontaktanfrage konnte nicht gesendet werden.', { senderEmail, subject });
+      return { success: false };
+    }
+
+    // Development: use Ethereal test account
+    const { transporter: devTransporter, user: devFromAddr } = await getDevTransporter();
+
+    const info = await devTransporter.sendMail({
+      from: `"Arkanum Akademie" <${devFromAddr}>`,
+      to: devFromAddr,
+      replyTo: senderEmail,
+      subject: `[Kontakt] ${subject}`,
+      html,
+      text,
+    });
+
+    const previewUrl = nodemailer.getTestMessageUrl(info) || undefined;
+    console.log('[dev] Contact email preview:', previewUrl);
+    return { success: true, previewUrl };
+  }
+
+  const fromAddress = process.env.SMTP_USER!;
+  await transporter.sendMail({
+    from: `"Arkanum Akademie" <${fromAddress}>`,
+    to: recipientEmail || fromAddress,
+    replyTo: senderEmail,
+    subject: `[Kontakt] ${subject}`,
+    html,
+    text,
   });
 
   return { success: true };

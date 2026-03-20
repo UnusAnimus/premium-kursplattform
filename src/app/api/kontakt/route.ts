@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { sendContactEmail } from '@/lib/email';
 
 export async function POST(req: NextRequest) {
   try {
@@ -26,13 +27,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Log the contact request (in production this would be sent via email or stored in DB)
-    console.log('[kontakt] Neue Kontaktanfrage:', {
-      name: `${firstName.trim()} ${lastName.trim()}`,
-      email: email.trim(),
+    await sendContactEmail({
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      senderEmail: email.trim(),
       subject: subject.trim(),
       message: message.trim(),
-      receivedAt: new Date().toISOString(),
     });
 
     return NextResponse.json(

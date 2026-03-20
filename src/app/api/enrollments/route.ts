@@ -73,14 +73,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Bereits eingeschrieben.' }, { status: 409 });
     }
 
-    const enrollment = await prisma.courseEnrollment.create({
-      data: { userId: session.user.id, courseId: course.id },
-    });
+    const enrollment = await prisma.$transaction(async (tx) => {
+      const created = await tx.courseEnrollment.create({
+        data: { userId: session.user.id, courseId: course.id },
+      });
 
-    // Update studentsCount
-    await prisma.course.update({
-      where: { id: course.id },
-      data: { studentsCount: { increment: 1 } },
+      await tx.course.update({
+        where: { id: course.id },
+        data: { studentsCount: { increment: 1 } },
+      });
+
+      return created;
     });
 
     return NextResponse.json({ enrollment }, { status: 201 });
