@@ -16,6 +16,15 @@ interface CourseRow {
   _count?: { enrollments: number };
 }
 
+interface CourseDetailRow extends CourseRow {
+  description: string;
+  longDescription: string;
+  instructorBio: string;
+  originalPrice: number | null;
+  tags: string[];
+  certificate: boolean;
+}
+
 type FormState = {
   title: string;
   slug: string;
@@ -97,25 +106,66 @@ export default function AdminKursePage() {
     setShowModal(true);
   };
 
-  const openEdit = (course: CourseRow) => {
+  const openEdit = async (course: CourseRow) => {
     setEditingId(course.id);
-    setForm({
-      title: course.title,
-      slug: course.slug,
-      description: '',
-      longDescription: '',
-      instructor: course.instructor,
-      instructorBio: '',
-      category: course.category,
-      level: course.level === 'Anfaenger' ? 'Anfänger' : course.level,
-      price: String(course.price),
-      originalPrice: '',
-      tags: '',
-      certificate: false,
-      featured: course.featured,
-    });
     setSaveError('');
     setShowModal(true);
+    // Fetch full course details to populate all form fields
+    try {
+      const res = await fetch(`/api/admin/courses/${course.id}`);
+      if (res.ok) {
+        const data = await res.json() as { course: CourseDetailRow };
+        const c = data.course;
+        setForm({
+          title: c.title,
+          slug: c.slug,
+          description: c.description ?? '',
+          longDescription: c.longDescription ?? '',
+          instructor: c.instructor,
+          instructorBio: c.instructorBio ?? '',
+          category: c.category,
+          level: c.level === 'Anfaenger' ? 'Anfänger' : c.level,
+          price: String(c.price),
+          originalPrice: c.originalPrice != null ? String(c.originalPrice) : '',
+          tags: Array.isArray(c.tags) ? c.tags.join(', ') : '',
+          certificate: c.certificate ?? false,
+          featured: c.featured,
+        });
+      } else {
+        // Fallback to partial data from list
+        setForm({
+          title: course.title,
+          slug: course.slug,
+          description: '',
+          longDescription: '',
+          instructor: course.instructor,
+          instructorBio: '',
+          category: course.category,
+          level: course.level === 'Anfaenger' ? 'Anfänger' : course.level,
+          price: String(course.price),
+          originalPrice: '',
+          tags: '',
+          certificate: false,
+          featured: course.featured,
+        });
+      }
+    } catch {
+      setForm({
+        title: course.title,
+        slug: course.slug,
+        description: '',
+        longDescription: '',
+        instructor: course.instructor,
+        instructorBio: '',
+        category: course.category,
+        level: course.level === 'Anfaenger' ? 'Anfänger' : course.level,
+        price: String(course.price),
+        originalPrice: '',
+        tags: '',
+        certificate: false,
+        featured: course.featured,
+      });
+    }
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -248,7 +298,8 @@ export default function AdminKursePage() {
                 <td className="p-4">
                   <div className="flex gap-3">
                     <Link href={`/kurse/${course.slug}`} target="_blank" className="text-xs text-violet-400 hover:text-violet-300 transition-colors">Ansehen</Link>
-                    <button onClick={() => openEdit(course)} className="text-xs text-slate-400 hover:text-white transition-colors">Bearbeiten</button>
+                    <Link href={`/admin/kurse/${course.id}`} className="text-xs text-blue-400 hover:text-blue-300 transition-colors">Module</Link>
+                    <button onClick={() => void openEdit(course)} className="text-xs text-slate-400 hover:text-white transition-colors">Bearbeiten</button>
                     <button onClick={() => setDeleteId(course.id)} className="text-xs text-red-400 hover:text-red-300 transition-colors">Löschen</button>
                   </div>
                 </td>
