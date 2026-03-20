@@ -18,7 +18,11 @@ const links = [
   { href: '/admin/seiten', label: 'Seitenverwaltung', icon: '≡' },
 ];
 
-export function AdminSidebar() {
+interface AdminSidebarProps {
+  onClose?: () => void;
+}
+
+export function AdminSidebar({ onClose }: AdminSidebarProps) {
   const pathname = usePathname();
   const { data: session } = useSession();
 
@@ -28,7 +32,7 @@ export function AdminSidebar() {
 
   return (
     <aside className="w-64 min-h-screen bg-[var(--bg-surface)] border-r border-[var(--border-base)] flex flex-col">
-      <div className="p-6 border-b border-[var(--border-base)]">
+      <div className="p-6 border-b border-[var(--border-base)] flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-600 to-purple-700 flex items-center justify-center">
             <span className="text-white font-bold text-xs">A</span>
@@ -38,6 +42,15 @@ export function AdminSidebar() {
             <p className="text-xs text-amber-500">Admin-Bereich</p>
           </div>
         </Link>
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="lg:hidden text-[var(--text-muted)] hover:text-[var(--text-primary)] p-1 rounded-md transition-colors"
+            aria-label="Menü schließen"
+          >
+            ✕
+          </button>
+        )}
       </div>
 
       {/* Admin user info */}
@@ -64,6 +77,7 @@ export function AdminSidebar() {
               <li key={link.href}>
                 <Link
                   href={link.href}
+                  onClick={onClose}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
                     isActive
                       ? 'bg-violet-500/15 text-violet-600 dark:text-violet-300 border border-violet-500/30'
@@ -81,6 +95,7 @@ export function AdminSidebar() {
       <div className="p-4 border-t border-[var(--border-base)] space-y-1">
         <Link
           href="/dashboard"
+          onClick={onClose}
           className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] transition-all"
         >
           <span>◎</span>
@@ -97,4 +112,3 @@ export function AdminSidebar() {
     </aside>
   );
 }
-

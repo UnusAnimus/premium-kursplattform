@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { LessonCompleteButton } from '@/components/courses/LessonCompleteButton';
 
 interface Props {
   params: Promise<{ slug: string; lessonId: string }>;
@@ -40,6 +41,9 @@ export default async function LessonPlayerPage({ params }: Props) {
           },
         },
       },
+      completions: {
+        where: { userId },
+      },
     },
   });
 
@@ -55,6 +59,16 @@ export default async function LessonPlayerPage({ params }: Props) {
   if (!lesson.isFree && !isEnrolled) {
     redirect(`/kurse/${slug}`);
   }
+
+  const isCompleted = lesson.completions.length > 0;
+
+  // Fetch all completions for this course to show in sidebar
+  const allLessonIds = course.modules.flatMap(m => m.lessons.map(l => l.id));
+  const completions = await prisma.lessonCompletion.findMany({
+    where: { userId, lessonId: { in: allLessonIds } },
+    select: { lessonId: true },
+  });
+  const completedSet = new Set(completions.map(c => c.lessonId));
 
   // Build flat lesson list for navigation
   const allLessons = course.modules.flatMap(m => m.lessons.map(l => ({ ...l, moduleTitle: m.title })));
@@ -121,6 +135,11 @@ export default async function LessonPlayerPage({ params }: Props) {
               {lesson.description && (
                 <p className="text-slate-400 leading-relaxed">{lesson.description}</p>
               )}
+              {isEnrolled && (
+                <div className="pt-2">
+                  <LessonCompleteButton lessonId={lessonId} initialCompleted={isCompleted} />
+                </div>
+              )}
             </div>
 
             {/* Navigation */}
@@ -165,6 +184,7 @@ export default async function LessonPlayerPage({ params }: Props) {
                     {module.lessons.map(l => {
                       const isCurrent = l.id === lessonId;
                       const accessible = l.isFree || isEnrolled;
+                      const isDone = completedSet.has(l.id);
                       return (
                         <div key={l.id}>
                           {accessible ? (
@@ -176,8 +196,8 @@ export default async function LessonPlayerPage({ params }: Props) {
                                   : 'text-slate-400 hover:bg-white/2 hover:text-white'
                               }`}
                             >
-                              <span className={isCurrent ? 'text-violet-400' : 'text-slate-600'}>
-                                {isCurrent ? '▶' : '○'}
+                              <span className={isCurrent ? 'text-violet-400' : isDone ? 'text-emerald-500' : 'text-slate-600'}>
+                                {isCurrent ? '▶' : isDone ? '✓' : '○'}
                               </span>
                               <span className="flex-1 leading-snug">{l.title}</span>
                               <span className="text-slate-600 shrink-0">{l.durationMin}m</span>

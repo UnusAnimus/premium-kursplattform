@@ -13,7 +13,11 @@ const links = [
   { href: '/abo', label: 'Abo verwalten', icon: '◆' },
 ];
 
-export function MemberSidebar() {
+interface MemberSidebarProps {
+  onClose?: () => void;
+}
+
+export function MemberSidebar({ onClose }: MemberSidebarProps) {
   const pathname = usePathname();
   const { data: session } = useSession();
 
@@ -23,13 +27,22 @@ export function MemberSidebar() {
 
   return (
     <aside className="w-64 min-h-screen bg-[var(--bg-surface)] border-r border-[var(--border-base)] flex flex-col">
-      <div className="p-6 border-b border-[var(--border-base)]">
+      <div className="p-6 border-b border-[var(--border-base)] flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-600 to-purple-700 flex items-center justify-center">
             <span className="text-white font-bold text-xs">A</span>
           </div>
           <span className="font-bold text-[var(--text-primary)] text-sm">Arkanum Akademie</span>
         </Link>
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="lg:hidden text-[var(--text-muted)] hover:text-[var(--text-primary)] p-1 rounded-md transition-colors"
+            aria-label="Menü schließen"
+          >
+            ✕
+          </button>
+        )}
       </div>
 
       {/* User info */}
@@ -56,6 +69,7 @@ export function MemberSidebar() {
               <li key={link.href}>
                 <Link
                   href={link.href}
+                  onClick={onClose}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
                     isActive
                       ? 'bg-violet-500/15 text-violet-600 dark:text-violet-300 border border-violet-500/30'
@@ -74,6 +88,7 @@ export function MemberSidebar() {
         {session?.user?.role === 'admin' && (
           <Link
             href="/admin"
+            onClick={onClose}
             className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-amber-500 hover:text-amber-400 hover:bg-amber-500/5 transition-all"
           >
             <span>⚡</span>

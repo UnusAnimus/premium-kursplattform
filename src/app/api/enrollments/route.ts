@@ -24,13 +24,55 @@ export async function GET() {
             category: true,
             level: true,
             lessonsCount: true,
+            modules: {
+              select: {
+                lessons: {
+                  select: { id: true },
+                },
+              },
+            },
           },
         },
       },
       orderBy: { enrolledAt: 'desc' },
     });
 
-    return NextResponse.json({ enrollments });
+    // Fetch completions for all lessons across all enrolled courses
+    const allLessonIds = enrollments.flatMap(e =>
+      e.course.modules.flatMap(m => m.lessons.map(l => l.id))
+    );
+    const completions = await prisma.lessonCompletion.findMany({
+      where: { userId: session.user.id, lessonId: { in: allLessonIds } },
+      select: { lessonId: true },
+    });
+    const completedSet = new Set(completions.map(c => c.lessonId));
+
+    const result = enrollments.map(e => {
+      const totalLessons = e.course.modules.reduce((sum, m) => sum + m.lessons.length, 0);
+      const completedLessons = e.course.modules.reduce(
+        (sum, m) => sum + m.lessons.filter(l => completedSet.has(l.id)).length,
+        0
+      );
+      return {
+        id: e.id,
+        enrolledAt: e.enrolledAt,
+        completedAt: e.completedAt,
+        course: {
+          id: e.course.id,
+          slug: e.course.slug,
+          title: e.course.title,
+          description: e.course.description,
+          instructor: e.course.instructor,
+          category: e.course.category,
+          level: e.course.level,
+          lessonsCount: totalLessons,
+        },
+        completedLessons,
+        progressPercent: totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0,
+      };
+    });
+
+    return NextResponse.json({ enrollments: result });
   } catch (error) {
     console.error('[enrollments GET] Fehler:', error);
     return NextResponse.json(
