@@ -255,8 +255,9 @@ export default function AdminLektionenPage() {
 
         {!isEdit && (
           <div>
-            <label className={labelClass}>Modul *</label>
+            <label htmlFor="lesson-module-select" className={labelClass}>Modul *</label>
             <select
+              id="lesson-module-select"
               value={formData.moduleId}
               onChange={e => setFormData(p => ({ ...p, moduleId: e.target.value }))}
               required

@@ -16,6 +16,15 @@ interface CourseRow {
   _count?: { enrollments: number };
 }
 
+interface CourseDetailRow extends CourseRow {
+  description: string;
+  longDescription: string;
+  instructorBio: string;
+  originalPrice: number | null;
+  tags: string[];
+  certificate: boolean;
+}
+
 type FormState = {
   title: string;
   slug: string;
@@ -105,7 +114,7 @@ export default function AdminKursePage() {
     try {
       const res = await fetch(`/api/admin/courses/${course.id}`);
       if (res.ok) {
-        const data = await res.json() as { course: CourseRow & { description: string; longDescription: string; instructorBio: string; originalPrice: number | null; tags: string[]; certificate: boolean } };
+        const data = await res.json() as { course: CourseDetailRow };
         const c = data.course;
         setForm({
           title: c.title,
