@@ -116,7 +116,7 @@ export const authOptions: NextAuthOptions = {
           token.id = dbUser?.id ?? user.id;
         } else {
           // Credentials login – user object already carries role and id
-          token.role = ((user as { role?: string }).role) ?? 'member';
+          token.role = user.role ?? 'member';
           token.id = user.id;
         }
       }
@@ -124,8 +124,8 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (session.user) {
-        (session.user as { role?: string }).role = token.role as string;
-        (session.user as { id?: string }).id = token.id as string;
+        session.user.role = (token.role ?? 'member') as string;
+        session.user.id = (token.id ?? '') as string;
       }
       return session;
     },
