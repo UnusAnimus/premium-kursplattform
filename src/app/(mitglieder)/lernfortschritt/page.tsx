@@ -18,24 +18,24 @@ export default function LernfortschrittPage() {
   return (
     <div className="max-w-6xl mx-auto space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-white mb-2">Lernfortschritt</h1>
-        <p className="text-slate-400">Verfolge deine Lernreise und feiere deine Fortschritte.</p>
+        <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">Lernfortschritt</h1>
+        <p className="text-[var(--text-secondary)]">Verfolge deine Lernreise und feiere deine Fortschritte.</p>
       </div>
 
       {/* Overview Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat, i) => (
-          <div key={i} className="bg-[#13131a] border border-[#1e1e2e] rounded-xl p-5 text-center">
+          <div key={i} className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-xl p-5 text-center">
             <div className="text-2xl mb-2">{stat.icon}</div>
-            <div className="text-xl font-bold text-white mb-1">{stat.value}</div>
-            <div className="text-slate-400 text-xs">{stat.label}</div>
+            <div className="text-xl font-bold text-[var(--text-primary)] mb-1">{stat.value}</div>
+            <div className="text-[var(--text-secondary)] text-xs">{stat.label}</div>
           </div>
         ))}
       </div>
 
       {/* Weekly Activity */}
-      <div className="bg-[#13131a] border border-[#1e1e2e] rounded-xl p-6">
-        <h2 className="text-xl font-bold text-white mb-6">Wochenaktivität</h2>
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-xl p-6">
+        <h2 className="text-xl font-bold text-[var(--text-primary)] mb-6">Wochenaktivität</h2>
         <div className="flex items-end gap-2 h-32">
           {[40, 65, 30, 80, 45, 90, 55].map((h, i) => (
             <div key={i} className="flex-1 flex flex-col items-center gap-1">
@@ -43,7 +43,7 @@ export default function LernfortschrittPage() {
                 className="w-full bg-violet-500/80 rounded-t-sm transition-all hover:bg-violet-400"
                 style={{ height: `${h}%` }}
               />
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-[var(--text-muted)]">
                 {['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'][i]}
               </span>
             </div>
@@ -53,16 +53,16 @@ export default function LernfortschrittPage() {
 
       {/* Course Progress */}
       <div>
-        <h2 className="text-xl font-bold text-white mb-4">Kursfortschritt</h2>
+        <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">Kursfortschritt</h2>
         <div className="space-y-4">
           {courseProgress.map(({ course, progress, completedLessons, totalLessons }) => (
-            <div key={course.id} className="bg-[#13131a] border border-[#1e1e2e] rounded-xl p-6">
+            <div key={course.id} className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-xl p-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h3 className="text-white font-semibold">{course.title}</h3>
-                  <p className="text-slate-500 text-sm">{completedLessons} von {totalLessons} Lektionen</p>
+                  <h3 className="text-[var(--text-primary)] font-semibold">{course.title}</h3>
+                  <p className="text-[var(--text-muted)] text-sm">{completedLessons} von {totalLessons} Lektionen</p>
                 </div>
-                <span className="text-violet-400 font-bold text-xl">{progress}%</span>
+                <span className="text-[var(--badge-brand-text)] font-bold text-xl">{progress}%</span>
               </div>
               <Progress value={progress} size="lg" />
             </div>

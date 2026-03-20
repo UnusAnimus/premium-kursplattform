@@ -20,27 +20,27 @@ export default function EinstellungenPage() {
   return (
     <div className="max-w-3xl mx-auto space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-white mb-2">Einstellungen</h1>
-        <p className="text-slate-400">Verwalte deine Kontoeinstellungen.</p>
+        <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">Einstellungen</h1>
+        <p className="text-[var(--text-secondary)]">Verwalte deine Kontoeinstellungen.</p>
       </div>
 
       {/* Notifications */}
-      <div className="bg-[#13131a] border border-[#1e1e2e] rounded-2xl p-6">
-        <h2 className="text-xl font-bold text-white mb-6">Benachrichtigungen</h2>
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-2xl p-6">
+        <h2 className="text-xl font-bold text-[var(--text-primary)] mb-6">Benachrichtigungen</h2>
         <div className="space-y-4">
           {[
             { key: 'email', label: 'E-Mail Benachrichtigungen', desc: 'Erhalte Updates zu deinen Kursen' },
             { key: 'newsletter', label: 'Newsletter', desc: 'Wöchentliche spirituelle Impulse' },
             { key: 'updates', label: 'Kurs-Updates', desc: 'Wenn neue Lektionen verfügbar sind' },
           ].map(item => (
-            <div key={item.key} className="flex items-center justify-between p-4 bg-[#0a0a0f] rounded-xl">
+            <div key={item.key} className="flex items-center justify-between p-4 surface-subtle rounded-xl">
               <div>
-                <p className="text-white text-sm font-medium">{item.label}</p>
-                <p className="text-slate-500 text-xs">{item.desc}</p>
+                <p className="text-[var(--text-primary)] text-sm font-medium">{item.label}</p>
+                <p className="text-[var(--text-muted)] text-xs">{item.desc}</p>
               </div>
               <button
                 onClick={() => setNotifications(prev => ({ ...prev, [item.key]: !prev[item.key as keyof typeof prev] }))}
-                className={`w-12 h-6 rounded-full transition-all ${notifications[item.key as keyof typeof notifications] ? 'bg-violet-600' : 'bg-[#2a2a3e]'} relative`}
+                className={`w-12 h-6 rounded-full transition-all ${notifications[item.key as keyof typeof notifications] ? 'bg-violet-600' : 'bg-[var(--border-strong)]'} relative`}
               >
                 <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${notifications[item.key as keyof typeof notifications] ? 'left-7' : 'left-1'}`} />
               </button>
@@ -50,21 +50,21 @@ export default function EinstellungenPage() {
       </div>
 
       {/* Privacy */}
-      <div className="bg-[#13131a] border border-[#1e1e2e] rounded-2xl p-6">
-        <h2 className="text-xl font-bold text-white mb-6">Datenschutz</h2>
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-2xl p-6">
+        <h2 className="text-xl font-bold text-[var(--text-primary)] mb-6">Datenschutz</h2>
         <div className="space-y-4">
           {[
             { key: 'publicProfile', label: 'Öffentliches Profil', desc: 'Andere können dein Profil sehen' },
             { key: 'showProgress', label: 'Fortschritt teilen', desc: 'Community sieht deinen Lernfortschritt' },
           ].map(item => (
-            <div key={item.key} className="flex items-center justify-between p-4 bg-[#0a0a0f] rounded-xl">
+            <div key={item.key} className="flex items-center justify-between p-4 surface-subtle rounded-xl">
               <div>
-                <p className="text-white text-sm font-medium">{item.label}</p>
-                <p className="text-slate-500 text-xs">{item.desc}</p>
+                <p className="text-[var(--text-primary)] text-sm font-medium">{item.label}</p>
+                <p className="text-[var(--text-muted)] text-xs">{item.desc}</p>
               </div>
               <button
                 onClick={() => setPrivacy(prev => ({ ...prev, [item.key]: !prev[item.key as keyof typeof prev] }))}
-                className={`w-12 h-6 rounded-full transition-all ${privacy[item.key as keyof typeof privacy] ? 'bg-violet-600' : 'bg-[#2a2a3e]'} relative`}
+                className={`w-12 h-6 rounded-full transition-all ${privacy[item.key as keyof typeof privacy] ? 'bg-violet-600' : 'bg-[var(--border-strong)]'} relative`}
               >
                 <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${privacy[item.key as keyof typeof privacy] ? 'left-7' : 'left-1'}`} />
               </button>
@@ -74,25 +74,25 @@ export default function EinstellungenPage() {
       </div>
 
       {/* Security */}
-      <div className="bg-[#13131a] border border-[#1e1e2e] rounded-2xl p-6">
-        <h2 className="text-xl font-bold text-white mb-6">Sicherheit</h2>
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-2xl p-6">
+        <h2 className="text-xl font-bold text-[var(--text-primary)] mb-6">Sicherheit</h2>
         <div className="space-y-3">
-          <div className="w-full text-left p-4 bg-[#0a0a0f] rounded-xl">
+          <div className="w-full text-left p-4 surface-subtle rounded-xl">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-white text-sm font-medium">Passwort ändern</p>
-                <p className="text-slate-500 text-xs">Diese Funktion ist noch nicht verfügbar.</p>
+                <p className="text-[var(--text-primary)] text-sm font-medium">Passwort ändern</p>
+                <p className="text-[var(--text-muted)] text-xs">Diese Funktion ist noch nicht verfügbar.</p>
               </div>
-              <span className="text-slate-600">→</span>
+              <span className="text-[var(--text-muted)]">→</span>
             </div>
           </div>
-          <div className="w-full text-left p-4 bg-[#0a0a0f] rounded-xl">
+          <div className="w-full text-left p-4 surface-subtle rounded-xl">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-white text-sm font-medium">Zwei-Faktor-Authentifizierung</p>
-                <p className="text-slate-500 text-xs">Diese Funktion ist noch nicht verfügbar.</p>
+                <p className="text-[var(--text-primary)] text-sm font-medium">Zwei-Faktor-Authentifizierung</p>
+                <p className="text-[var(--text-muted)] text-xs">Diese Funktion ist noch nicht verfügbar.</p>
               </div>
-              <span className="text-slate-600">→</span>
+              <span className="text-[var(--text-muted)]">→</span>
             </div>
           </div>
         </div>
@@ -108,7 +108,7 @@ export default function EinstellungenPage() {
           {saving ? 'Wird gespeichert…' : 'Einstellungen speichern'}
         </button>
         {saved && (
-          <span className="text-emerald-400 text-sm">✓ Einstellungen gespeichert</span>
+          <span className="text-[var(--status-success-text)] text-sm">✓ Einstellungen gespeichert</span>
         )}
       </div>
     </div>

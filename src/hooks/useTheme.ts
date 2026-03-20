@@ -1,37 +1,49 @@
 'use client';
 import { useState, useEffect } from 'react';
 
+type Theme = 'light' | 'dark';
+
+function applyTheme(theme: Theme) {
+  const root = document.documentElement;
+  root.classList.toggle('dark', theme === 'dark');
+  root.classList.toggle('light', theme === 'light');
+  root.style.colorScheme = theme;
+}
+
 export function useTheme() {
-  const [isDark, setIsDark] = useState(true);
+  const [theme, setTheme] = useState<Theme>('dark');
 
   useEffect(() => {
-    const saved = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const dark = saved ? saved === 'dark' : prefersDark;
-    setIsDark(dark);
-    if (dark) {
-      document.documentElement.classList.add('dark');
-      document.documentElement.classList.remove('light');
-    } else {
-      document.documentElement.classList.remove('dark');
-      document.documentElement.classList.add('light');
-    }
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const savedTheme = localStorage.getItem('theme');
+    const nextTheme: Theme = savedTheme === 'light' || savedTheme === 'dark'
+      ? savedTheme
+      : (mediaQuery.matches ? 'dark' : 'light');
+
+    setTheme(nextTheme);
+    applyTheme(nextTheme);
+
+    const handleSystemChange = (event: MediaQueryListEvent) => {
+      if (localStorage.getItem('theme')) {
+        return;
+      }
+
+      const systemTheme: Theme = event.matches ? 'dark' : 'light';
+      setTheme(systemTheme);
+      applyTheme(systemTheme);
+    };
+
+    mediaQuery.addEventListener('change', handleSystemChange);
+    return () => mediaQuery.removeEventListener('change', handleSystemChange);
   }, []);
 
   const toggleTheme = () => {
-    const newIsDark = !isDark;
-    setIsDark(newIsDark);
-    if (newIsDark) {
-      document.documentElement.classList.add('dark');
-      document.documentElement.classList.remove('light');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      document.documentElement.classList.add('light');
-      localStorage.setItem('theme', 'light');
-    }
+    const nextTheme: Theme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(nextTheme);
+    applyTheme(nextTheme);
+    localStorage.setItem('theme', nextTheme);
   };
 
-  return { isDark, toggleTheme };
+  return { isDark: theme === 'dark', theme, toggleTheme };
 }
 

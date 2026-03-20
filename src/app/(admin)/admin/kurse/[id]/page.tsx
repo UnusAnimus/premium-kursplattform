@@ -39,8 +39,8 @@ const EMPTY_MODULE_FORM: ModuleForm = { title: '', description: '' };
 const EMPTY_LESSON_FORM: LessonForm = { title: '', description: '', durationMin: '', videoUrl: '', isFree: false };
 
 const inputClass =
-  'w-full bg-[#0a0a0f] border border-[#2a2a3e] text-white rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-slate-600';
-const labelClass = 'block text-slate-400 text-xs font-medium mb-1.5';
+  'w-full bg-[var(--input-bg)] border border-[var(--border-base)] text-[var(--text-primary)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-[var(--text-muted)]';
+const labelClass = 'block text-[var(--text-secondary)] text-xs font-medium mb-1.5';
 
 export default function AdminKursDetailPage() {
   const params = useParams<{ id: string }>();
@@ -227,7 +227,7 @@ export default function AdminKursDetailPage() {
   if (loading) {
     return (
       <div className="max-w-5xl mx-auto">
-        <div className="text-slate-500 text-sm py-12 text-center">Kurs wird geladen…</div>
+        <div className="text-[var(--text-muted)] text-sm py-12 text-center">Kurs wird geladen…</div>
       </div>
     );
   }
@@ -239,19 +239,19 @@ export default function AdminKursDetailPage() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <div className="flex items-center gap-2 text-slate-500 text-sm mb-2">
-            <Link href="/admin/kurse" className="hover:text-slate-300 transition-colors">Kurse</Link>
+          <div className="flex items-center gap-2 text-[var(--text-muted)] text-sm mb-2">
+            <Link href="/admin/kurse" className="hover:text-[var(--text-secondary)] transition-colors">Kurse</Link>
             <span>/</span>
-            <span className="text-slate-300">{course.title}</span>
+            <span className="text-[var(--text-secondary)]">{course.title}</span>
           </div>
-          <h1 className="text-2xl font-bold text-white">{course.title}</h1>
-          <p className="text-slate-400 text-sm mt-1">von {course.instructor} · {course.category}</p>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">{course.title}</h1>
+          <p className="text-[var(--text-secondary)] text-sm mt-1">von {course.instructor} · {course.category}</p>
         </div>
         <div className="flex gap-3">
           <Link
             href={`/kurse/${course.slug}`}
             target="_blank"
-            className="border border-[#2a2a3e] text-slate-300 hover:text-white px-4 py-2 rounded-lg text-sm transition-colors"
+            className="border border-[var(--border-strong)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)] px-4 py-2 rounded-lg text-sm transition-colors"
           >
             Kurs ansehen ↗
           </Link>
@@ -271,18 +271,18 @@ export default function AdminKursDetailPage() {
           { label: 'Lektionen', value: course.modules.reduce((s, m) => s + m.lessons.length, 0) },
           { label: 'Gesamtdauer', value: `${course.modules.reduce((s, m) => s + m.lessons.reduce((ls, l) => ls + l.durationMin, 0), 0)} Min.` },
         ].map(stat => (
-          <div key={stat.label} className="bg-[#13131a] border border-[#1e1e2e] rounded-xl p-4">
-            <p className="text-slate-500 text-xs mb-1">{stat.label}</p>
-            <p className="text-white text-xl font-bold">{stat.value}</p>
+          <div key={stat.label} className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-xl p-4">
+            <p className="text-[var(--text-muted)] text-xs mb-1">{stat.label}</p>
+            <p className="text-[var(--text-primary)] text-xl font-bold">{stat.value}</p>
           </div>
         ))}
       </div>
 
       {/* Module list */}
       {course.modules.length === 0 ? (
-        <div className="bg-[#13131a] border border-[#1e1e2e] rounded-xl p-12 text-center">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-xl p-12 text-center">
           <div className="text-4xl opacity-20 mb-3">◈</div>
-          <p className="text-slate-400 text-sm mb-4">Noch keine Module vorhanden.</p>
+          <p className="text-[var(--text-secondary)] text-sm mb-4">Noch keine Module vorhanden.</p>
           <button onClick={openCreateModule} className="bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-lg text-sm">
             Erstes Modul erstellen
           </button>
@@ -290,31 +290,31 @@ export default function AdminKursDetailPage() {
       ) : (
         <div className="space-y-4">
           {course.modules.map((mod, mi) => (
-            <div key={mod.id} className="bg-[#13131a] border border-[#1e1e2e] rounded-xl overflow-hidden">
+            <div key={mod.id} className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-xl overflow-hidden">
               {/* Module header */}
-              <div className="flex items-center justify-between p-5 border-b border-[#1e1e2e]">
+              <div className="flex items-center justify-between p-5 border-b border-[var(--border-base)]">
                 <div className="flex items-center gap-3">
-                  <span className="bg-violet-500/10 text-violet-400 text-xs font-bold w-7 h-7 rounded-lg flex items-center justify-center">
+                  <span className="brand-chip text-xs font-bold w-7 h-7 rounded-lg flex items-center justify-center">
                     {mi + 1}
                   </span>
                   <div>
-                    <p className="text-white font-semibold">{mod.title}</p>
+                    <p className="text-[var(--text-primary)] font-semibold">{mod.title}</p>
                     {mod.description && (
-                      <p className="text-slate-500 text-xs mt-0.5">{mod.description}</p>
+                      <p className="text-[var(--text-muted)] text-xs mt-0.5">{mod.description}</p>
                     )}
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-slate-500 text-xs">{mod.lessons.length} Lektionen</span>
+                  <span className="text-[var(--text-muted)] text-xs">{mod.lessons.length} Lektionen</span>
                   <button
                     onClick={() => openCreateLesson(mod.id)}
-                    className="text-xs bg-[#1e1e2e] hover:bg-[#2a2a3e] text-slate-300 px-3 py-1.5 rounded-lg transition-colors"
+                    className="text-xs bg-[var(--bg-surface-raised)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-secondary)] px-3 py-1.5 rounded-lg transition-colors"
                   >
                     + Lektion
                   </button>
                   <button
                     onClick={() => openEditModule(mod)}
-                    className="text-xs text-slate-400 hover:text-white transition-colors"
+                    className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
                   >
                     Bearbeiten
                   </button>
@@ -329,15 +329,15 @@ export default function AdminKursDetailPage() {
 
               {/* Lessons */}
               {mod.lessons.length > 0 ? (
-                <div className="divide-y divide-[#1e1e2e]">
+                <div className="divide-y divide-[var(--border-base)]">
                   {mod.lessons.map((lesson, li) => (
-                    <div key={lesson.id} className="flex items-center justify-between px-5 py-3 hover:bg-white/2 transition-colors">
+                    <div key={lesson.id} className="flex items-center justify-between px-5 py-3 hover:bg-[var(--row-hover)] transition-colors">
                       <div className="flex items-center gap-3 min-w-0">
-                        <span className="text-slate-600 text-xs w-5 text-right flex-shrink-0">{li + 1}.</span>
+                        <span className="text-[var(--text-muted)] text-xs w-5 text-right flex-shrink-0">{li + 1}.</span>
                         <div className="min-w-0">
-                          <p className="text-slate-200 text-sm font-medium truncate">{lesson.title}</p>
+                          <p className="text-[var(--text-primary)] text-sm font-medium truncate">{lesson.title}</p>
                           {lesson.description && (
-                            <p className="text-slate-500 text-xs truncate">{lesson.description}</p>
+                            <p className="text-[var(--text-muted)] text-xs truncate">{lesson.description}</p>
                           )}
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
@@ -350,10 +350,10 @@ export default function AdminKursDetailPage() {
                         </div>
                       </div>
                       <div className="flex items-center gap-4 flex-shrink-0 ml-4">
-                        <span className="text-slate-500 text-xs">{lesson.durationMin} Min.</span>
+                        <span className="text-[var(--text-muted)] text-xs">{lesson.durationMin} Min.</span>
                         <button
                           onClick={() => openEditLesson(lesson, mod.id)}
-                          className="text-xs text-slate-400 hover:text-white transition-colors"
+                          className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
                         >
                           Bearbeiten
                         </button>
@@ -369,7 +369,7 @@ export default function AdminKursDetailPage() {
                 </div>
               ) : (
                 <div className="p-5 text-center">
-                  <p className="text-slate-600 text-sm">Noch keine Lektionen in diesem Modul.</p>
+                  <p className="text-[var(--text-muted)] text-sm">Noch keine Lektionen in diesem Modul.</p>
                   <button
                     onClick={() => openCreateLesson(mod.id)}
                     className="text-violet-400 hover:text-violet-300 text-sm mt-2 transition-colors"
@@ -385,17 +385,17 @@ export default function AdminKursDetailPage() {
 
       {/* ── Module Modal ───────────────────────────────────────────────────── */}
       {moduleModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-start justify-center p-4 overflow-y-auto">
-          <div className="bg-[#13131a] border border-[#1e1e2e] rounded-2xl w-full max-w-lg my-8">
-            <div className="flex items-center justify-between p-6 border-b border-[#1e1e2e]">
-              <h2 className="text-xl font-bold text-white">
+        <div className="fixed inset-0 bg-[var(--overlay-bg)] backdrop-blur-sm z-50 flex items-start justify-center p-4 overflow-y-auto">
+          <div className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-2xl w-full max-w-lg my-8">
+            <div className="flex items-center justify-between p-6 border-b border-[var(--border-base)]">
+              <h2 className="text-xl font-bold text-[var(--text-primary)]">
                 {moduleModal === 'create' ? 'Neues Modul erstellen' : 'Modul bearbeiten'}
               </h2>
-              <button onClick={() => setModuleModal(null)} className="text-slate-500 hover:text-white transition-colors text-xl">✕</button>
+              <button onClick={() => setModuleModal(null)} className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors text-xl">✕</button>
             </div>
             <form onSubmit={handleSaveModule} className="p-6 space-y-4">
               {saveError && (
-                <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm px-4 py-3 rounded-xl">{saveError}</div>
+                <div className="status-error text-sm px-4 py-3 rounded-xl">{saveError}</div>
               )}
               <div>
                 <label className={labelClass}>Titel *</label>
@@ -418,7 +418,7 @@ export default function AdminKursDetailPage() {
                   className={inputClass}
                 />
               </div>
-              <div className="flex gap-3 pt-2 border-t border-[#1e1e2e]">
+              <div className="flex gap-3 pt-2 border-t border-[var(--border-base)]">
                 <button
                   type="submit"
                   disabled={saving}
@@ -429,7 +429,7 @@ export default function AdminKursDetailPage() {
                 <button
                   type="button"
                   onClick={() => setModuleModal(null)}
-                  className="flex-1 border border-[#2a2a3e] text-slate-300 hover:text-white py-3 rounded-xl transition-all"
+                  className="flex-1 border border-[var(--border-strong)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)] py-3 rounded-xl transition-all"
                 >
                   Abbrechen
                 </button>
@@ -441,17 +441,17 @@ export default function AdminKursDetailPage() {
 
       {/* ── Lesson Modal ───────────────────────────────────────────────────── */}
       {lessonModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-start justify-center p-4 overflow-y-auto">
-          <div className="bg-[#13131a] border border-[#1e1e2e] rounded-2xl w-full max-w-lg my-8">
-            <div className="flex items-center justify-between p-6 border-b border-[#1e1e2e]">
-              <h2 className="text-xl font-bold text-white">
+        <div className="fixed inset-0 bg-[var(--overlay-bg)] backdrop-blur-sm z-50 flex items-start justify-center p-4 overflow-y-auto">
+          <div className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-2xl w-full max-w-lg my-8">
+            <div className="flex items-center justify-between p-6 border-b border-[var(--border-base)]">
+              <h2 className="text-xl font-bold text-[var(--text-primary)]">
                 {lessonModal === 'create' ? 'Neue Lektion erstellen' : 'Lektion bearbeiten'}
               </h2>
-              <button onClick={() => setLessonModal(null)} className="text-slate-500 hover:text-white transition-colors text-xl">✕</button>
+              <button onClick={() => setLessonModal(null)} className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors text-xl">✕</button>
             </div>
             <form onSubmit={handleSaveLesson} className="p-6 space-y-4">
               {saveError && (
-                <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm px-4 py-3 rounded-xl">{saveError}</div>
+                <div className="status-error text-sm px-4 py-3 rounded-xl">{saveError}</div>
               )}
               <div>
                 <label className={labelClass}>Titel *</label>
@@ -505,9 +505,9 @@ export default function AdminKursDetailPage() {
                   onChange={e => setLessonForm(p => ({ ...p, isFree: e.target.checked }))}
                   className="accent-violet-600 w-4 h-4"
                 />
-                <span className="text-slate-300 text-sm">Kostenlose Vorschau</span>
+                <span className="text-[var(--text-secondary)] text-sm">Kostenlose Vorschau</span>
               </label>
-              <div className="flex gap-3 pt-2 border-t border-[#1e1e2e]">
+              <div className="flex gap-3 pt-2 border-t border-[var(--border-base)]">
                 <button
                   type="submit"
                   disabled={saving}
@@ -518,7 +518,7 @@ export default function AdminKursDetailPage() {
                 <button
                   type="button"
                   onClick={() => setLessonModal(null)}
-                  className="flex-1 border border-[#2a2a3e] text-slate-300 hover:text-white py-3 rounded-xl transition-all"
+                  className="flex-1 border border-[var(--border-strong)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)] py-3 rounded-xl transition-all"
                 >
                   Abbrechen
                 </button>
@@ -530,11 +530,11 @@ export default function AdminKursDetailPage() {
 
       {/* Delete Module Confirmation */}
       {deleteModuleId && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-[#13131a] border border-[#1e1e2e] rounded-2xl p-8 w-full max-w-md text-center">
+        <div className="fixed inset-0 bg-[var(--overlay-bg)] backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-2xl p-8 w-full max-w-md text-center">
             <div className="text-4xl mb-4">⚠</div>
-            <h2 className="text-xl font-bold text-white mb-2">Modul löschen?</h2>
-            <p className="text-slate-400 text-sm mb-6">Alle Lektionen in diesem Modul werden ebenfalls gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.</p>
+            <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">Modul löschen?</h2>
+            <p className="text-[var(--text-secondary)] text-sm mb-6">Alle Lektionen in diesem Modul werden ebenfalls gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.</p>
             <div className="flex gap-3">
               <button
                 onClick={() => void handleDeleteModule(deleteModuleId)}
@@ -544,7 +544,7 @@ export default function AdminKursDetailPage() {
               </button>
               <button
                 onClick={() => setDeleteModuleId(null)}
-                className="flex-1 border border-[#2a2a3e] text-slate-300 hover:text-white py-2.5 rounded-xl transition-all"
+                className="flex-1 border border-[var(--border-strong)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)] py-2.5 rounded-xl transition-all"
               >
                 Abbrechen
               </button>
@@ -555,11 +555,11 @@ export default function AdminKursDetailPage() {
 
       {/* Delete Lesson Confirmation */}
       {deleteLessonId && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-[#13131a] border border-[#1e1e2e] rounded-2xl p-8 w-full max-w-md text-center">
+        <div className="fixed inset-0 bg-[var(--overlay-bg)] backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-2xl p-8 w-full max-w-md text-center">
             <div className="text-4xl mb-4">⚠</div>
-            <h2 className="text-xl font-bold text-white mb-2">Lektion löschen?</h2>
-            <p className="text-slate-400 text-sm mb-6">Diese Aktion kann nicht rückgängig gemacht werden.</p>
+            <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">Lektion löschen?</h2>
+            <p className="text-[var(--text-secondary)] text-sm mb-6">Diese Aktion kann nicht rückgängig gemacht werden.</p>
             <div className="flex gap-3">
               <button
                 onClick={() => void handleDeleteLesson(deleteLessonId)}
@@ -569,7 +569,7 @@ export default function AdminKursDetailPage() {
               </button>
               <button
                 onClick={() => setDeleteLessonId(null)}
-                className="flex-1 border border-[#2a2a3e] text-slate-300 hover:text-white py-2.5 rounded-xl transition-all"
+                className="flex-1 border border-[var(--border-strong)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)] py-2.5 rounded-xl transition-all"
               >
                 Abbrechen
               </button>

@@ -14,14 +14,14 @@ export default function AdminDesignPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-white mb-1">Design-Einstellungen</h1>
-        <p className="text-slate-400">Gestalte das visuelle Erscheinungsbild der Plattform.</p>
+        <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-1">Design-Einstellungen</h1>
+        <p className="text-[var(--text-secondary)]">Gestalte das visuelle Erscheinungsbild der Plattform.</p>
       </div>
 
       <div className="space-y-6">
         {/* Hero Style */}
-        <div className="bg-[#13131a] border border-[#1e1e2e] rounded-xl p-6">
-          <h2 className="text-lg font-semibold text-white mb-4">Hero-Hintergrund</h2>
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-xl p-6">
+          <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">Hero-Hintergrund</h2>
           <div className="grid grid-cols-3 gap-3">
             {[
               { value: 'particles', label: 'Partikel' },
@@ -33,8 +33,8 @@ export default function AdminDesignPage() {
                 onClick={() => setSettings(prev => ({ ...prev, heroStyle: option.value }))}
                 className={`p-4 rounded-xl border text-sm font-medium transition-all ${
                   settings.heroStyle === option.value
-                    ? 'bg-violet-500/20 border-violet-500 text-violet-300'
-                    : 'bg-[#0a0a0f] border-[#1e1e2e] text-slate-400 hover:text-white'
+                    ? 'brand-chip'
+                    : 'bg-[var(--bg-surface-raised)] border-[var(--border-base)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-violet-500'
                 }`}
               >
                 {option.label}
@@ -44,8 +44,8 @@ export default function AdminDesignPage() {
         </div>
 
         {/* Font */}
-        <div className="bg-[#13131a] border border-[#1e1e2e] rounded-xl p-6">
-          <h2 className="text-lg font-semibold text-white mb-4">Schriftart</h2>
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-xl p-6">
+          <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">Schriftart</h2>
           <div className="grid grid-cols-3 gap-3">
             {[
               { value: 'inter', label: 'Inter' },
@@ -57,8 +57,8 @@ export default function AdminDesignPage() {
                 onClick={() => setSettings(prev => ({ ...prev, fontFamily: option.value }))}
                 className={`p-4 rounded-xl border text-sm font-medium transition-all ${
                   settings.fontFamily === option.value
-                    ? 'bg-violet-500/20 border-violet-500 text-violet-300'
-                    : 'bg-[#0a0a0f] border-[#1e1e2e] text-slate-400 hover:text-white'
+                    ? 'brand-chip'
+                    : 'bg-[var(--bg-surface-raised)] border-[var(--border-base)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-violet-500'
                 }`}
               >
                 {option.label}
@@ -68,8 +68,8 @@ export default function AdminDesignPage() {
         </div>
 
         {/* Toggle settings */}
-        <div className="bg-[#13131a] border border-[#1e1e2e] rounded-xl p-6">
-          <h2 className="text-lg font-semibold text-white mb-4">Effekte</h2>
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-xl p-6">
+          <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">Effekte</h2>
           <div className="space-y-4">
             {[
               { key: 'animationsEnabled', label: 'Animationen aktiviert', desc: 'Float- und Pulsieranimationen' },
@@ -78,12 +78,12 @@ export default function AdminDesignPage() {
             ].map(item => (
               <div key={item.key} className="flex items-center justify-between">
                 <div>
-                  <p className="text-white text-sm">{item.label}</p>
-                  <p className="text-slate-500 text-xs">{item.desc}</p>
+                  <p className="text-[var(--text-primary)] text-sm">{item.label}</p>
+                  <p className="text-[var(--text-muted)] text-xs">{item.desc}</p>
                 </div>
                 <button
                   onClick={() => setSettings(prev => ({ ...prev, [item.key]: !prev[item.key as keyof typeof prev] }))}
-                  className={`w-12 h-6 rounded-full transition-all relative ${settings[item.key as keyof typeof settings] ? 'bg-violet-600' : 'bg-[#2a2a3e]'}`}
+                  className={`w-12 h-6 rounded-full transition-all relative ${settings[item.key as keyof typeof settings] ? 'bg-violet-600' : 'bg-[var(--border-strong)]'}`}
                 >
                   <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${settings[item.key as keyof typeof settings] ? 'left-7' : 'left-1'}`} />
                 </button>

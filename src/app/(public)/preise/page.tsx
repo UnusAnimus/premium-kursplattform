@@ -12,20 +12,20 @@ const faq = [
 
 export default function PreisePage() {
   return (
-    <div className="bg-[#0a0a0f] min-h-screen">
+    <div className="bg-[var(--bg-base)] min-h-screen">
       {/* Header */}
-      <div className="border-b border-[#1e1e2e] text-center py-24">
-        <div className="inline-flex items-center gap-2 bg-violet-500/10 border border-violet-500/30 rounded-full px-4 py-2 mb-6">
-          <span className="text-violet-400">◆</span>
-          <span className="text-violet-300 text-sm">Transparente Preise</span>
+      <div className="border-b border-[var(--border-base)] text-center py-24">
+        <div className="inline-flex items-center gap-2 brand-chip rounded-full px-4 py-2 mb-6">
+          <span>◆</span>
+          <span className="text-sm">Transparente Preise</span>
         </div>
-        <h1 className="text-5xl font-bold text-white mb-4">
+        <h1 className="text-5xl font-bold text-[var(--text-primary)] mb-4">
           Wähle deinen{' '}
           <span className="bg-gradient-to-r from-violet-400 to-amber-400 bg-clip-text text-transparent">
             Lernpfad
           </span>
         </h1>
-        <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+        <p className="text-[var(--text-secondary)] text-lg max-w-2xl mx-auto">
           Flexible Mitgliedschaftsoptionen für jeden Lernenden – von Einsteiger bis Meister.
         </p>
       </div>
@@ -42,17 +42,17 @@ export default function PreisePage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-24 bg-[#13131a]/30 border-t border-[#1e1e2e]">
+      <section className="py-24 bg-[var(--bg-surface-raised)] border-t border-[var(--border-base)]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">Häufige Fragen</h2>
-            <p className="text-slate-400">Alles was du wissen musst, bevor du startest.</p>
+            <h2 className="text-4xl font-bold text-[var(--text-primary)] mb-4">Häufige Fragen</h2>
+            <p className="text-[var(--text-secondary)]">Alles was du wissen musst, bevor du startest.</p>
           </div>
           <div className="space-y-4">
             {faq.map((item, i) => (
-              <div key={i} className="bg-[#13131a] border border-[#1e1e2e] rounded-xl p-6 hover:border-violet-500/30 transition-all">
-                <h3 className="text-white font-semibold mb-2">{item.q}</h3>
-                <p className="text-slate-400 text-sm leading-relaxed">{item.a}</p>
+              <div key={i} className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-xl p-6 hover:bg-[var(--bg-surface-hover)] hover:border-violet-500/30 transition-all">
+                <h3 className="text-[var(--text-primary)] font-semibold mb-2">{item.q}</h3>
+                <p className="text-[var(--text-secondary)] text-sm leading-relaxed">{item.a}</p>
               </div>
             ))}
           </div>

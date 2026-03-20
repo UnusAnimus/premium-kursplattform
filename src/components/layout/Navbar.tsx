@@ -2,14 +2,13 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
-import { useTheme } from '@/hooks/useTheme';
 import { Button } from '@/components/ui/button';
-import { Sun, Moon, Menu, X } from 'lucide-react';
+import { ThemeToggle } from '@/components/layout/ThemeToggle';
+import { Menu, X } from 'lucide-react';
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const { isDark, toggleTheme } = useTheme();
   const { data: session } = useSession();
 
   const isLoggedIn = !!session?.user;
@@ -59,13 +58,7 @@ export function Navbar() {
 
           {/* Right actions */}
           <div className="flex items-center gap-3">
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] transition-all duration-200"
-              aria-label="Theme wechseln"
-            >
-              {isDark ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
+            <ThemeToggle className="p-2" />
             {isLoggedIn ? (
               <>
                 <Link href={isAdmin ? '/admin' : '/dashboard'} data-testid={isAdmin ? 'nav-admin-link' : 'nav-dashboard-link'}>

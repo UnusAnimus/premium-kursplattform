@@ -79,10 +79,10 @@ export default function AdminKiPage() {
     return (
       <div className="max-w-4xl mx-auto space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-1">KI-Einstellungen</h1>
-          <p className="text-slate-400">Konfiguriere den KI-Assistenten.</p>
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-1">KI-Einstellungen</h1>
+          <p className="text-[var(--text-secondary)]">Konfiguriere den KI-Assistenten.</p>
         </div>
-        <div className="text-slate-400 text-sm">Lade Einstellungen…</div>
+        <div className="text-[var(--text-secondary)] text-sm">Lade Einstellungen…</div>
       </div>
     );
   }
@@ -90,20 +90,20 @@ export default function AdminKiPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-white mb-1">KI-Einstellungen</h1>
-        <p className="text-slate-400">Konfiguriere den KI-Assistenten.</p>
+        <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-1">KI-Einstellungen</h1>
+        <p className="text-[var(--text-secondary)]">Konfiguriere den KI-Assistenten.</p>
       </div>
 
-      <div className="bg-[#13131a] border border-[#1e1e2e] rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-white mb-6">Grundkonfiguration</h2>
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-xl p-6">
+        <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-6">Grundkonfiguration</h2>
         <div className="space-y-4">
           {/* Model */}
           <div>
-            <label className="text-slate-300 text-sm font-medium block mb-2">KI-Modell</label>
+            <label className="text-[var(--text-secondary)] text-sm font-medium block mb-2">KI-Modell</label>
             <select
               value={settings.model}
               onChange={e => setSettings(prev => ({ ...prev, model: e.target.value }))}
-              className="w-full bg-[#0a0a0f] border border-[#1e1e2e] rounded-lg px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-violet-500"
+              className="w-full bg-[var(--input-bg)] border border-[var(--border-base)] rounded-lg px-4 py-2.5 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-violet-500"
             >
               {KI_ALLOWED_MODELS.map(m => (
                 <option key={m} value={m}>{m}</option>
@@ -113,7 +113,7 @@ export default function AdminKiPage() {
 
           {/* Temperature */}
           <div>
-            <label className="text-slate-300 text-sm font-medium block mb-2">
+            <label className="text-[var(--text-secondary)] text-sm font-medium block mb-2">
               Kreativität (Temperatur): {settings.temperature}
             </label>
             <input
@@ -125,7 +125,7 @@ export default function AdminKiPage() {
               onChange={e => setSettings(prev => ({ ...prev, temperature: parseFloat(e.target.value) }))}
               className="w-full accent-violet-600"
             />
-            <div className="flex justify-between text-xs text-slate-500 mt-1">
+            <div className="flex justify-between text-xs text-[var(--text-muted)] mt-1">
               <span>Präzise</span>
               <span>Kreativ</span>
             </div>
@@ -133,7 +133,7 @@ export default function AdminKiPage() {
 
           {/* Max Tokens */}
           <div>
-            <label className="text-slate-300 text-sm font-medium block mb-2">
+            <label className="text-[var(--text-secondary)] text-sm font-medium block mb-2">
               Max. Token: {settings.maxTokens}
             </label>
             <input
@@ -145,7 +145,7 @@ export default function AdminKiPage() {
               onChange={e => setSettings(prev => ({ ...prev, maxTokens: parseInt(e.target.value) }))}
               className="w-full accent-violet-600"
             />
-            <div className="flex justify-between text-xs text-slate-500 mt-1">
+            <div className="flex justify-between text-xs text-[var(--text-muted)] mt-1">
               <span>256</span>
               <span>4096</span>
             </div>
@@ -153,15 +153,15 @@ export default function AdminKiPage() {
 
           {/* System Prompt */}
           <div>
-            <label className="text-slate-300 text-sm font-medium block mb-2">System-Prompt</label>
+            <label className="text-[var(--text-secondary)] text-sm font-medium block mb-2">System-Prompt</label>
             <textarea
               value={settings.systemPrompt}
               onChange={e => setSettings(prev => ({ ...prev, systemPrompt: e.target.value }))}
               rows={5}
               maxLength={KI_SYSTEM_PROMPT_MAX_LENGTH}
-              className="w-full bg-[#0a0a0f] border border-[#1e1e2e] rounded-lg px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-violet-500 resize-vertical"
+              className="w-full bg-[var(--input-bg)] border border-[var(--border-base)] rounded-lg px-4 py-2.5 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-violet-500 resize-vertical"
             />
-            <p className="text-xs text-slate-500 mt-1 text-right">{settings.systemPrompt.length}/{KI_SYSTEM_PROMPT_MAX_LENGTH}</p>
+            <p className="text-xs text-[var(--text-muted)] mt-1 text-right">{settings.systemPrompt.length}/{KI_SYSTEM_PROMPT_MAX_LENGTH}</p>
           </div>
 
           {/* Toggles */}
@@ -169,14 +169,14 @@ export default function AdminKiPage() {
             { key: 'enabled' as const, label: 'KI-Assistent aktiviert', desc: 'Mitglieder können den Assistenten nutzen' },
             { key: 'knowledgeBase' as const, label: 'Kurswissen einbeziehen', desc: 'Antworten basieren auf Kursinhalten' },
           ]).map(item => (
-            <div key={item.key} className="flex items-center justify-between p-4 bg-[#0a0a0f] rounded-xl">
+            <div key={item.key} className="flex items-center justify-between p-4 surface-subtle rounded-xl">
               <div>
-                <p className="text-white text-sm">{item.label}</p>
-                <p className="text-slate-500 text-xs">{item.desc}</p>
+                <p className="text-[var(--text-primary)] text-sm">{item.label}</p>
+                <p className="text-[var(--text-muted)] text-xs">{item.desc}</p>
               </div>
               <button
                 onClick={() => setSettings(prev => ({ ...prev, [item.key]: !prev[item.key] }))}
-                className={`w-12 h-6 rounded-full transition-all relative ${settings[item.key] ? 'bg-violet-600' : 'bg-[#2a2a3e]'}`}
+                className={`w-12 h-6 rounded-full transition-all relative ${settings[item.key] ? 'bg-violet-600' : 'bg-[var(--border-strong)]'}`}
               >
                 <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${settings[item.key] ? 'left-7' : 'left-1'}`} />
               </button>
@@ -189,8 +189,8 @@ export default function AdminKiPage() {
         <div
           className={`px-4 py-3 rounded-lg text-sm ${
             saveMessage.type === 'success'
-              ? 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-300'
-              : 'bg-red-500/10 border border-red-500/30 text-red-300'
+              ? 'status-success'
+              : 'status-error'
           }`}
         >
           {saveMessage.text}

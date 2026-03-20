@@ -9,20 +9,22 @@ interface CourseCardProps {
 
 export function CourseCard({ course }: CourseCardProps) {
   return (
-    <div className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-xl overflow-hidden hover:border-violet-500/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-violet-500/10 flex flex-col">
+    <div className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-xl overflow-hidden hover:bg-[var(--bg-surface-hover)] hover:border-violet-500/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-md)] flex flex-col">
       {/* Image area */}
-      <div className="relative aspect-video bg-gradient-to-br from-violet-900/40 to-amber-900/20 flex items-center justify-center">
-        <span className="text-6xl opacity-40">
+      <div className="relative aspect-video overflow-hidden bg-[var(--bg-surface-raised)] flex items-center justify-center">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(124,58,237,0.18),transparent_52%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(245,158,11,0.12),transparent_45%)]" />
+        <span className="relative z-10 text-6xl opacity-60 text-[var(--badge-brand-text)]">
           {course.category === 'Metaphysik' ? '∞' :
            course.category === 'Heilung' ? '✦' :
            course.category === 'Astrologie' ? '☽' :
            course.category === 'Hermetik' ? '⚗' :
            course.category === 'Traumarbeit' ? '◈' : '⬡'}
         </span>
-        <span className="absolute top-3 left-3 bg-violet-500/80 text-white text-xs font-medium px-2.5 py-1 rounded-full">
+        <span className="absolute top-3 left-3 brand-chip text-xs font-medium px-2.5 py-1 rounded-full">
           {course.category}
         </span>
-        <span className="absolute top-3 right-3 bg-[var(--bg-surface)]/80 text-[var(--text-secondary)] text-xs px-2.5 py-1 rounded-full border border-[var(--border-base)]">
+        <span className="absolute top-3 right-3 bg-[var(--bg-surface)]/90 text-[var(--text-secondary)] text-xs px-2.5 py-1 rounded-full border border-[var(--border-base)] backdrop-blur-sm">
           {course.level}
         </span>
       </div>
@@ -47,7 +49,7 @@ export function CourseCard({ course }: CourseCardProps) {
         <div className="flex items-center gap-4 text-xs text-[var(--text-muted)] mb-4">
           <span>🕐 {formatDuration(course.duration)}</span>
           <span>◈ {course.lessonsCount} Lektionen</span>
-          {course.certificate && <span className="text-violet-400">◆ Zertifikat</span>}
+          {course.certificate && <span className="text-[var(--badge-brand-text)]">◆ Zertifikat</span>}
         </div>
 
         {/* Price & CTA */}

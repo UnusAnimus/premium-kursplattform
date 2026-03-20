@@ -1,5 +1,6 @@
 'use client';
 import { useSession } from 'next-auth/react';
+import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import { getInitials } from '@/lib/utils';
 
 export function AdminTopbar() {
@@ -14,6 +15,7 @@ export function AdminTopbar() {
         <span className="text-[var(--text-muted)] text-sm">Admin-Bereich</span>
       </div>
       <div className="flex items-center gap-3">
+        <ThemeToggle className="h-10 w-10 border border-[var(--border-base)] bg-[var(--bg-surface-raised)]" />
         <div className="w-9 h-9 rounded-full bg-violet-600 flex items-center justify-center text-white text-sm font-semibold">
           {initials}
         </div>

@@ -76,11 +76,11 @@ export default function KiAssistentPage() {
   return (
     <div className="max-w-4xl mx-auto flex flex-col h-[calc(100vh-120px)]">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-white mb-1">KI-Assistent ✦</h1>
-        <p className="text-slate-400 text-sm">Dein persönlicher Lernbegleiter auf dem spirituellen Pfad.</p>
+        <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-1">KI-Assistent ✦</h1>
+        <p className="text-[var(--text-secondary)] text-sm">Dein persönlicher Lernbegleiter auf dem spirituellen Pfad.</p>
       </div>
 
-      <div className="flex-1 bg-[#13131a] border border-[#1e1e2e] rounded-2xl flex flex-col overflow-hidden">
+      <div className="flex-1 bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-2xl flex flex-col overflow-hidden shadow-[var(--shadow-sm)]">
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
           {messages.map(msg => (
@@ -92,7 +92,7 @@ export default function KiAssistentPage() {
               </div>
               <div className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${
                 msg.role === 'assistant'
-                  ? 'bg-[#1e1e2e] text-slate-200 rounded-tl-none'
+                  ? 'bg-[var(--bg-surface-raised)] text-[var(--text-secondary)] rounded-tl-none border border-[var(--border-base)]'
                   : 'bg-violet-600 text-white rounded-tr-none'
               }`}>
                 {msg.content}
@@ -102,7 +102,7 @@ export default function KiAssistentPage() {
           {isTyping && (
             <div className="flex gap-3">
               <div className="w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center text-sm text-white flex-shrink-0">✦</div>
-              <div className="bg-[#1e1e2e] px-4 py-3 rounded-2xl rounded-tl-none flex gap-1 items-center">
+              <div className="bg-[var(--bg-surface-raised)] border border-[var(--border-base)] px-4 py-3 rounded-2xl rounded-tl-none flex gap-1 items-center">
                 {[0, 1, 2].map(i => (
                   <span key={i} className="w-2 h-2 bg-violet-400 rounded-full animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
                 ))}
@@ -111,8 +111,8 @@ export default function KiAssistentPage() {
           )}
           {error && (
             <div className="flex gap-3">
-              <div className="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center text-sm text-red-400 flex-shrink-0">!</div>
-              <div className="max-w-[80%] px-4 py-3 rounded-2xl text-sm bg-red-500/10 border border-red-500/20 text-red-300 rounded-tl-none">
+              <div className="w-8 h-8 rounded-full status-error flex items-center justify-center text-sm flex-shrink-0">!</div>
+              <div className="max-w-[80%] px-4 py-3 rounded-2xl text-sm status-error rounded-tl-none">
                 {error}
               </div>
             </div>
@@ -122,14 +122,14 @@ export default function KiAssistentPage() {
 
         {/* Suggestions */}
         {messages.length === 1 && (
-          <div className="px-6 py-3 border-t border-[#1e1e2e]">
-            <p className="text-xs text-slate-500 mb-2">Vorschläge:</p>
+          <div className="px-6 py-3 border-t border-[var(--border-base)]">
+            <p className="text-xs text-[var(--text-muted)] mb-2">Vorschläge:</p>
             <div className="flex flex-wrap gap-2">
               {suggestions.map(s => (
                 <button
                   key={s}
                   onClick={() => sendMessage(s)}
-                  className="text-xs bg-violet-500/10 text-violet-300 border border-violet-500/30 px-3 py-1.5 rounded-full hover:bg-violet-500/20 transition-all"
+                  className="text-xs brand-chip px-3 py-1.5 rounded-full hover:bg-[var(--badge-brand-bg)] transition-all"
                 >
                   {s}
                 </button>
@@ -139,14 +139,14 @@ export default function KiAssistentPage() {
         )}
 
         {/* Input */}
-        <div className="p-4 border-t border-[#1e1e2e] flex gap-3">
+        <div className="p-4 border-t border-[var(--border-base)] flex gap-3">
           <input
             type="text"
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendMessage(input)}
             placeholder="Stelle deine Frage..."
-            className="flex-1 bg-[#0a0a0f] border border-[#1e1e2e] rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
+            className="flex-1 bg-[var(--input-bg)] border border-[var(--border-base)] rounded-xl px-4 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
           />
           <button
             onClick={() => sendMessage(input)}

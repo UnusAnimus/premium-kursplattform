@@ -7,18 +7,25 @@ import { Testimonials } from '@/components/sections/Testimonials';
 import { CtaSection } from '@/components/sections/CtaSection';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
-import { courses, pricingPlans } from '@/lib/data';
+import { pricingPlans } from '@/lib/data';
+import { getPublicCourses } from '@/lib/publicCourses';
 import Link from 'next/link';
 
-export default function HomePage() {
-  const featuredCourses = courses.filter(c => c.featured).slice(0, 3);
+export const dynamic = 'force-dynamic';
+
+export default async function HomePage() {
+  const courses = await getPublicCourses();
+  const featuredCourses = courses.filter(course => course.featured).slice(0, 3);
+  const averageRating = courses.length > 0
+    ? courses.reduce((total, course) => total + course.rating, 0) / courses.length
+    : 0;
 
   return (
     <>
       <Navbar />
       <main>
-        <Hero />
-        <Stats />
+        <Hero courseCount={courses.length} />
+        <Stats courseCount={courses.length} averageRating={averageRating} />
         <Features />
 
         {/* Featured Courses */}
@@ -39,11 +46,21 @@ export default function HomePage() {
                 Entdecke unsere beliebtesten Kurse und beginne deine spirituelle Reise.
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
-              {featuredCourses.map(course => (
-                <CourseCard key={course.id} course={course} />
-              ))}
-            </div>
+            {featuredCourses.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
+                {featuredCourses.map(course => (
+                  <CourseCard key={course.id} course={course} />
+                ))}
+              </div>
+            ) : (
+              <div className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-2xl p-10 text-center mb-10">
+                <div className="text-5xl opacity-30 mb-4">◈</div>
+                <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">Noch keine empfohlenen Kurse veröffentlicht</h3>
+                <p className="text-[var(--text-secondary)] max-w-2xl mx-auto">
+                  Sobald im Admin-Bereich Kurse als empfohlen markiert sind, erscheinen sie automatisch hier auf der Startseite.
+                </p>
+              </div>
+            )}
             <div className="text-center">
               <Link
                 href="/kurse"

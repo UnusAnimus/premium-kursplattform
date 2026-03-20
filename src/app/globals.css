@@ -7,11 +7,30 @@
   --bg-surface: #ffffff;
   --bg-surface-raised: #f3f0ff;
   --bg-surface-hover: #ede8ff;
+  --surface-subtle: #f5f1ff;
+  --input-bg: #ffffff;
   --text-primary: #1a1028;
   --text-secondary: #52476e;
   --text-muted: #9b8eb8;
   --border-base: #e4dff5;
   --border-strong: #c9bff0;
+  --overlay-bg: rgba(19, 16, 34, 0.4);
+  --row-hover: rgba(124, 58, 237, 0.08);
+  --badge-brand-bg: rgba(124, 58, 237, 0.12);
+  --badge-brand-border: rgba(124, 58, 237, 0.2);
+  --badge-brand-text: #6d28d9;
+  --status-success-bg: rgba(16, 185, 129, 0.12);
+  --status-success-border: rgba(5, 150, 105, 0.24);
+  --status-success-text: #047857;
+  --status-warning-bg: rgba(245, 158, 11, 0.12);
+  --status-warning-border: rgba(217, 119, 6, 0.24);
+  --status-warning-text: #b45309;
+  --status-neutral-bg: rgba(82, 71, 110, 0.08);
+  --status-neutral-border: rgba(82, 71, 110, 0.18);
+  --status-neutral-text: #52476e;
+  --status-error-bg: rgba(220, 38, 38, 0.1);
+  --status-error-border: rgba(220, 38, 38, 0.2);
+  --status-error-text: #b91c1c;
   --primary: #7c3aed;
   --primary-light: #8b5cf6;
   --primary-dark: #5b21b6;
@@ -34,11 +53,30 @@ html.dark {
   --bg-surface: #0d0d1a;
   --bg-surface-raised: #131324;
   --bg-surface-hover: #1a1a2e;
+  --surface-subtle: #10101d;
+  --input-bg: #10101d;
   --text-primary: #f0eeff;
   --text-secondary: #a89ec8;
   --text-muted: #6b6085;
   --border-base: #1e1e35;
   --border-strong: #2a2a48;
+  --overlay-bg: rgba(0, 0, 0, 0.72);
+  --row-hover: rgba(255, 255, 255, 0.03);
+  --badge-brand-bg: rgba(124, 58, 237, 0.18);
+  --badge-brand-border: rgba(167, 139, 250, 0.24);
+  --badge-brand-text: #c4b5fd;
+  --status-success-bg: rgba(16, 185, 129, 0.12);
+  --status-success-border: rgba(52, 211, 153, 0.24);
+  --status-success-text: #6ee7b7;
+  --status-warning-bg: rgba(245, 158, 11, 0.14);
+  --status-warning-border: rgba(251, 191, 36, 0.24);
+  --status-warning-text: #fcd34d;
+  --status-neutral-bg: rgba(168, 158, 200, 0.1);
+  --status-neutral-border: rgba(168, 158, 200, 0.18);
+  --status-neutral-text: #c4bddf;
+  --status-error-bg: rgba(239, 68, 68, 0.12);
+  --status-error-border: rgba(248, 113, 113, 0.24);
+  --status-error-text: #fca5a5;
   --primary: #7c3aed;
   --primary-light: #a78bfa;
   --primary-dark: #4c1d95;
@@ -50,6 +88,14 @@ html.dark {
   --shadow-glow: 0 0 40px rgba(124,58,237,0.35);
   --glow: 0 0 40px rgba(124,58,237,0.35);
   --glow-accent: 0 0 40px rgba(245,158,11,0.25);
+}
+
+html {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
 }
 
 * {
@@ -65,6 +111,7 @@ body {
 }
 
 body {
+  min-height: 100vh;
   background-color: var(--bg-base);
   color: var(--text-primary);
   font-family: var(--font-inter), system-ui, sans-serif;
@@ -132,6 +179,35 @@ html:not(.dark) .glass {
 .surface-raised {
   background-color: var(--bg-surface-raised);
   border: 1px solid var(--border-base);
+}
+.surface-subtle {
+  background-color: var(--surface-subtle);
+  border: 1px solid var(--border-base);
+}
+.brand-chip {
+  background-color: var(--badge-brand-bg);
+  border: 1px solid var(--badge-brand-border);
+  color: var(--badge-brand-text);
+}
+.status-success {
+  background-color: var(--status-success-bg);
+  border: 1px solid var(--status-success-border);
+  color: var(--status-success-text);
+}
+.status-warning {
+  background-color: var(--status-warning-bg);
+  border: 1px solid var(--status-warning-border);
+  color: var(--status-warning-text);
+}
+.status-neutral {
+  background-color: var(--status-neutral-bg);
+  border: 1px solid var(--status-neutral-border);
+  color: var(--status-neutral-text);
+}
+.status-error {
+  background-color: var(--status-error-bg);
+  border: 1px solid var(--status-error-border);
+  color: var(--status-error-text);
 }
 
 @layer utilities {

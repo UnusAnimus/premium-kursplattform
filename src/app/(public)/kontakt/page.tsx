@@ -44,13 +44,15 @@ export default function KontaktPage() {
   };
 
   return (
-    <div className="bg-[#0a0a0f] min-h-screen">
-      <div className="border-b border-[#1e1e2e] text-center py-24">
+    <div className="bg-[var(--bg-base)] min-h-screen">
+      <div className="border-b border-[var(--border-base)] text-center py-24">
         <h1 className="text-5xl font-bold text-white mb-4">
+          <span className="text-[var(--text-primary)]">
           Kontakt{' '}
+          </span>
           <span className="bg-gradient-to-r from-violet-400 to-amber-400 bg-clip-text text-transparent">aufnehmen</span>
         </h1>
-        <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+        <p className="text-[var(--text-secondary)] text-lg max-w-2xl mx-auto">
           Hast du Fragen? Wir sind für dich da. Schreib uns und wir melden uns innerhalb von 24 Stunden.
         </p>
       </div>
@@ -59,7 +61,7 @@ export default function KontaktPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
           {/* Contact Info */}
           <div>
-            <h2 className="text-2xl font-bold text-white mb-8">So erreichst du uns</h2>
+            <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-8">So erreichst du uns</h2>
             <div className="space-y-6">
               {[
                 { icon: '◎', title: 'E-Mail', desc: 'kontakt@arkanum-akademie.de', sub: 'Antwort innerhalb 24 Stunden' },
@@ -67,13 +69,13 @@ export default function KontaktPage() {
                 { icon: '✦', title: 'Live-Support', desc: 'Wöchentliche Live-Sessions', sub: 'Jeden Dienstag um 19:00 Uhr' },
               ].map((item, i) => (
                 <div key={i} className="flex gap-4">
-                  <div className="w-12 h-12 bg-violet-500/10 rounded-xl flex items-center justify-center text-2xl text-violet-400 flex-shrink-0">
+                  <div className="w-12 h-12 brand-chip rounded-xl flex items-center justify-center text-2xl flex-shrink-0">
                     {item.icon}
                   </div>
                   <div>
-                    <h3 className="text-white font-semibold">{item.title}</h3>
-                    <p className="text-slate-300 text-sm">{item.desc}</p>
-                    <p className="text-slate-500 text-xs">{item.sub}</p>
+                    <h3 className="text-[var(--text-primary)] font-semibold">{item.title}</h3>
+                    <p className="text-[var(--text-secondary)] text-sm">{item.desc}</p>
+                    <p className="text-[var(--text-muted)] text-xs">{item.sub}</p>
                   </div>
                 </div>
               ))}
@@ -83,16 +85,16 @@ export default function KontaktPage() {
           {/* Form */}
           <div>
             {sent ? (
-              <div className="bg-[#13131a] border border-emerald-500/30 rounded-2xl p-12 text-center">
+              <div className="status-success rounded-2xl p-12 text-center">
                 <div className="text-5xl mb-4">✦</div>
-                <h3 className="text-white text-2xl font-bold mb-2">Nachricht gesendet!</h3>
-                <p className="text-slate-400">Wir melden uns innerhalb von 24 Stunden bei dir.</p>
+                <h3 className="text-2xl font-bold mb-2">Nachricht gesendet!</h3>
+                <p>Wir melden uns innerhalb von 24 Stunden bei dir.</p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="bg-[#13131a] border border-[#1e1e2e] rounded-2xl p-8 space-y-6">
-                <h2 className="text-2xl font-bold text-white">Schreib uns</h2>
+              <form onSubmit={handleSubmit} className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-2xl p-8 space-y-6 shadow-[var(--shadow-sm)]">
+                <h2 className="text-2xl font-bold text-[var(--text-primary)]">Schreib uns</h2>
                 {error && (
-                  <p className="text-red-400 text-sm bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-2">{error}</p>
+                  <p className="status-error text-sm rounded-lg px-4 py-2">{error}</p>
                 )}
                 <div className="grid grid-cols-2 gap-4">
                   <Input label="Vorname" name="firstName" placeholder="Max" required />

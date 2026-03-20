@@ -1,4 +1,3 @@
-import { courses } from '@/lib/data';
 import { formatPrice, formatDuration } from '@/lib/utils';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -6,20 +5,17 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { EnrollButton } from '@/components/courses/EnrollButton';
+import { getPublicCourseBySlug } from '@/lib/publicCourses';
 
 interface Props {
   params: Promise<{ slug: string }>;
-}
-
-export function generateStaticParams() {
-  return courses.map(course => ({ slug: course.slug }));
 }
 
 export const dynamic = 'force-dynamic';
 
 export default async function CourseDetailPage({ params }: Props) {
   const { slug } = await params;
-  const course = courses.find(c => c.slug === slug);
+  const course = await getPublicCourseBySlug(slug);
   if (!course) notFound();
 
   const session = await getServerSession(authOptions);
@@ -27,86 +23,69 @@ export default async function CourseDetailPage({ params }: Props) {
 
   // Check enrollment status and get first lesson ID from DB
   let isEnrolled = false;
-  let firstLessonId: string | null = null;
+  const firstLessonId = course.modules[0]?.lessons[0]?.id ?? null;
   const userId = session?.user?.id;
 
   if (userId) {
     try {
-      const dbCourse = await prisma.course.findUnique({
-        where: { slug },
-        include: {
-          enrollments: {
-            where: { userId },
-          },
-          modules: {
-            orderBy: { order: 'asc' },
-            take: 1,
-            include: {
-              lessons: {
-                orderBy: { order: 'asc' },
-                take: 1,
-              },
-            },
+      const enrollment = await prisma.courseEnrollment.findUnique({
+        where: {
+          userId_courseId: {
+            userId,
+            courseId: course.id,
           },
         },
       });
 
-      if (dbCourse) {
-        isEnrolled = dbCourse.enrollments.length > 0;
-        firstLessonId = dbCourse.modules[0]?.lessons[0]?.id ?? null;
-      }
+      isEnrolled = !!enrollment;
     } catch {
       // DB unavailable – fall back to non-enrolled state
     }
   }
 
-  const totalDuration = course.modules.reduce((acc, mod) =>
-    acc + mod.lessons.reduce((a, l) => a + l.duration, 0), 0
-  );
-
   return (
-    <div className="bg-[#0a0a0f] min-h-screen">
+    <div className="bg-[var(--bg-base)] min-h-screen">
       {/* Hero */}
-      <div className="bg-gradient-to-b from-violet-950/30 to-[#0a0a0f] border-b border-[#1e1e2e]">
+      <div className="bg-[linear-gradient(180deg,rgba(124,58,237,0.12),transparent)] border-b border-[var(--border-base)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             <div className="lg:col-span-2">
               <div className="flex items-center gap-2 mb-4">
-                <span className="bg-violet-500/20 text-violet-300 text-xs px-3 py-1 rounded-full border border-violet-500/30">
+                <span className="brand-chip text-xs px-3 py-1 rounded-full">
                   {course.category}
                 </span>
-                <span className="bg-[#1e1e2e] text-slate-400 text-xs px-3 py-1 rounded-full">
+                <span className="surface-subtle text-[var(--text-secondary)] text-xs px-3 py-1 rounded-full">
                   {course.level}
                 </span>
               </div>
-              <h1 className="text-4xl font-bold text-white mb-4">{course.title}</h1>
-              <p className="text-slate-300 text-lg mb-6 leading-relaxed">{course.description}</p>
+              <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-4">{course.title}</h1>
+              <p className="text-[var(--text-secondary)] text-lg mb-6 leading-relaxed">{course.description}</p>
 
               <div className="flex items-center gap-4 mb-6">
                 <div className="flex items-center gap-1">
                   {[1, 2, 3, 4, 5].map(star => (
-                    <span key={star} className={star <= Math.round(course.rating) ? 'text-amber-400' : 'text-slate-600'}>★</span>
+                    <span key={star} className={star <= Math.round(course.rating) ? 'text-amber-400' : 'text-[var(--border-strong)]'}>★</span>
                   ))}
                 </div>
                 <span className="text-amber-400 font-semibold">{course.rating}</span>
-                <span className="text-slate-500">({course.reviewsCount} Bewertungen)</span>
+                <span className="text-[var(--text-muted)]">({course.reviewsCount} Bewertungen)</span>
               </div>
 
-              <p className="text-slate-400 text-sm mb-8">
-                Erstellt von <span className="text-violet-400 font-medium">{course.instructor}</span>
+              <p className="text-[var(--text-secondary)] text-sm mb-8">
+                Erstellt von <span className="text-[var(--badge-brand-text)] font-medium">{course.instructor}</span>
               </p>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {[
-                  { icon: '🕐', label: 'Dauer', value: formatDuration(totalDuration) },
+                  { icon: '🕐', label: 'Dauer', value: formatDuration(course.duration) },
                   { icon: '◈', label: 'Lektionen', value: `${course.lessonsCount}` },
                   { icon: '◎', label: 'Studierende', value: `${course.studentsCount.toLocaleString('de-DE')}` },
                   { icon: '◆', label: 'Zertifikat', value: course.certificate ? 'Ja' : 'Nein' },
                 ].map((item, i) => (
-                  <div key={i} className="bg-[#13131a] border border-[#1e1e2e] rounded-xl p-4">
+                  <div key={i} className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-xl p-4">
                     <div className="text-xl mb-1">{item.icon}</div>
-                    <div className="text-xs text-slate-500 mb-1">{item.label}</div>
-                    <div className="text-white font-semibold">{item.value}</div>
+                    <div className="text-xs text-[var(--text-muted)] mb-1">{item.label}</div>
+                    <div className="text-[var(--text-primary)] font-semibold">{item.value}</div>
                   </div>
                 ))}
               </div>
@@ -114,16 +93,18 @@ export default async function CourseDetailPage({ params }: Props) {
 
             {/* Sidebar enrollment card */}
             <div className="lg:col-span-1">
-              <div className="bg-[#13131a] border border-[#1e1e2e] rounded-2xl p-6 sticky top-24">
-                <div className="aspect-video bg-gradient-to-br from-violet-900/40 to-amber-900/20 rounded-xl flex items-center justify-center mb-6">
-                  <span className="text-7xl opacity-40">
+              <div className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-2xl p-6 sticky top-24 shadow-[var(--shadow-sm)]">
+                <div className="relative aspect-video overflow-hidden bg-[var(--bg-surface-raised)] rounded-xl flex items-center justify-center mb-6">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(124,58,237,0.18),transparent_52%)]" />
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(245,158,11,0.12),transparent_45%)]" />
+                  <span className="relative z-10 text-7xl opacity-60 text-[var(--badge-brand-text)]">
                     {course.category === 'Metaphysik' ? '∞' : course.category === 'Heilung' ? '✦' : course.category === 'Astrologie' ? '☽' : course.category === 'Hermetik' ? '⚗' : course.category === 'Traumarbeit' ? '◈' : '⬡'}
                   </span>
                 </div>
                 <div className="flex items-baseline gap-2 mb-2">
-                  <span className="text-3xl font-bold text-white">{formatPrice(course.price)}</span>
+                  <span className="text-3xl font-bold text-[var(--text-primary)]">{formatPrice(course.price)}</span>
                   {course.originalPrice && (
-                    <span className="text-slate-500 text-lg line-through">{formatPrice(course.originalPrice)}</span>
+                    <span className="text-[var(--text-muted)] text-lg line-through">{formatPrice(course.originalPrice)}</span>
                   )}
                 </div>
                 {course.originalPrice && (
@@ -146,11 +127,11 @@ export default async function CourseDetailPage({ params }: Props) {
                 />
                 <Link
                   href="/preise"
-                  className="block w-full border border-[#2a2a3e] hover:border-violet-500 text-slate-300 hover:text-white font-semibold py-3 rounded-xl text-center transition-all text-sm"
+                  className="block w-full border border-[var(--border-strong)] hover:bg-[var(--bg-surface-hover)] hover:border-violet-500 text-[var(--text-primary)] font-semibold py-3 rounded-xl text-center transition-all text-sm"
                 >
                   Mit Abo – ab 29 €/Monat
                 </Link>
-                <p className="text-xs text-slate-500 text-center mt-4">30 Tage Geld-zurück-Garantie</p>
+                <p className="text-xs text-[var(--text-muted)] text-center mt-4">30 Tage Geld-zurück-Garantie</p>
               </div>
             </div>
           </div>
@@ -163,30 +144,30 @@ export default async function CourseDetailPage({ params }: Props) {
           <div className="lg:col-span-2 space-y-12">
             {/* About */}
             <div>
-              <h2 className="text-2xl font-bold text-white mb-4">Über diesen Kurs</h2>
-              <p className="text-slate-400 leading-relaxed">{course.longDescription}</p>
+              <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-4">Über diesen Kurs</h2>
+              <p className="text-[var(--text-secondary)] leading-relaxed">{course.longDescription}</p>
             </div>
 
             {/* Instructor */}
             <div>
-              <h2 className="text-2xl font-bold text-white mb-4">Dein Lehrmeister</h2>
-              <div className="bg-[#13131a] border border-[#1e1e2e] rounded-xl p-6 flex gap-4">
+              <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-4">Dein Lehrmeister</h2>
+              <div className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-xl p-6 flex gap-4">
                 <div className="w-16 h-16 rounded-full bg-violet-600 flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
                   {course.instructor.split(' ').map(n => n[0]).join('')}
                 </div>
                 <div>
-                  <h3 className="text-white font-semibold text-lg">{course.instructor}</h3>
-                  <p className="text-slate-400 text-sm mt-2 leading-relaxed">{course.instructorBio}</p>
+                  <h3 className="text-[var(--text-primary)] font-semibold text-lg">{course.instructor}</h3>
+                  <p className="text-[var(--text-secondary)] text-sm mt-2 leading-relaxed">{course.instructorBio}</p>
                 </div>
               </div>
             </div>
 
             {/* Tags */}
             <div>
-              <h2 className="text-2xl font-bold text-white mb-4">Themen</h2>
+              <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-4">Themen</h2>
               <div className="flex flex-wrap gap-2">
                 {course.tags.map(tag => (
-                  <span key={tag} className="bg-violet-500/10 text-violet-300 border border-violet-500/30 text-sm px-4 py-1.5 rounded-full">
+                  <span key={tag} className="brand-chip text-sm px-4 py-1.5 rounded-full">
                     {tag}
                   </span>
                 ))}
@@ -195,27 +176,27 @@ export default async function CourseDetailPage({ params }: Props) {
 
             {/* Curriculum */}
             <div>
-              <h2 className="text-2xl font-bold text-white mb-6">Kursinhalt</h2>
+              <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6">Kursinhalt</h2>
               <div className="space-y-4">
                 {course.modules.map(module => (
-                  <div key={module.id} className="bg-[#13131a] border border-[#1e1e2e] rounded-xl overflow-hidden">
-                    <div className="p-5 bg-[#1a1a24]">
-                      <h3 className="text-white font-semibold">{module.title}</h3>
-                      <p className="text-slate-500 text-sm">{module.description}</p>
+                  <div key={module.id} className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-xl overflow-hidden">
+                    <div className="p-5 bg-[var(--bg-surface-raised)]">
+                      <h3 className="text-[var(--text-primary)] font-semibold">{module.title}</h3>
+                      <p className="text-[var(--text-muted)] text-sm">{module.description}</p>
                     </div>
-                    <ul className="divide-y divide-[#1e1e2e]">
+                    <ul className="divide-y divide-[var(--border-base)]">
                       {module.lessons.map(lesson => (
                         <li key={lesson.id} className="flex items-center gap-4 px-5 py-3.5">
-                          <span className={lesson.isFree ? 'text-emerald-400' : 'text-slate-600'}>
+                          <span className={lesson.isFree ? 'text-emerald-500' : 'text-[var(--text-muted)]'}>
                             {lesson.isFree ? '▶' : '🔒'}
                           </span>
-                          <span className="flex-1 text-slate-300 text-sm">{lesson.title}</span>
+                          <span className="flex-1 text-[var(--text-secondary)] text-sm">{lesson.title}</span>
                           {lesson.isFree && (
                             <span className="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full">
                               Kostenlos
                             </span>
                           )}
-                          <span className="text-slate-500 text-xs">{lesson.duration} Min.</span>
+                          <span className="text-[var(--text-muted)] text-xs">{lesson.duration} Min.</span>
                         </li>
                       ))}
                     </ul>

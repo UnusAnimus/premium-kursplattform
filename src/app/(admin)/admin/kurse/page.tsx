@@ -233,15 +233,15 @@ export default function AdminKursePage() {
     }
   };
 
-  const inputClass = 'w-full bg-[#0a0a0f] border border-[#2a2a3e] text-white rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-slate-600';
-  const labelClass = 'block text-slate-400 text-xs font-medium mb-1.5';
+  const inputClass = 'w-full bg-[var(--input-bg)] border border-[var(--border-base)] text-[var(--text-primary)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-[var(--text-muted)]';
+  const labelClass = 'block text-[var(--text-secondary)] text-xs font-medium mb-1.5';
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-1">Kurse verwalten</h1>
-          <p className="text-slate-400">
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-1">Kurse verwalten</h1>
+          <p className="text-[var(--text-secondary)]">
             {loading ? 'Wird geladen…' : `${courses.length} Kurs${courses.length !== 1 ? 'e' : ''}`}
           </p>
         </div>
@@ -253,43 +253,43 @@ export default function AdminKursePage() {
         </button>
       </div>
 
-      <div className="bg-[#13131a] border border-[#1e1e2e] rounded-xl overflow-hidden">
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-xl overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="border-b border-[#1e1e2e]">
+          <thead className="border-b border-[var(--border-base)] bg-[var(--bg-surface-raised)]">
             <tr>
               {['Kurs', 'Kategorie', 'Niveau', 'Preis', 'Einschreibungen', 'Bewertung', 'Aktionen'].map(h => (
-                <th key={h} className="text-left text-slate-400 font-medium p-4">{h}</th>
+                <th key={h} className="text-left text-[var(--text-secondary)] font-medium p-4">{h}</th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#1e1e2e]">
+          <tbody className="divide-y divide-[var(--border-base)]">
             {loading ? (
               <tr>
-                <td colSpan={7} className="p-8 text-center text-slate-500">Kurse werden geladen…</td>
+                <td colSpan={7} className="p-8 text-center text-[var(--text-muted)]">Kurse werden geladen…</td>
               </tr>
             ) : courses.length === 0 ? (
               <tr>
                 <td colSpan={7} className="p-12 text-center">
                   <div className="text-4xl opacity-20 mb-3">◈</div>
-                  <p className="text-slate-400 text-sm">Keine Kurse vorhanden. Erstelle deinen ersten Kurs.</p>
+                  <p className="text-[var(--text-secondary)] text-sm">Keine Kurse vorhanden. Erstelle deinen ersten Kurs.</p>
                 </td>
               </tr>
             ) : courses.map(course => (
-              <tr key={course.id} className="hover:bg-white/2 transition-colors">
+              <tr key={course.id} className="hover:bg-[var(--row-hover)] transition-colors">
                 <td className="p-4">
                   <div>
-                    <p className="text-white font-medium">{course.title}</p>
-                    <p className="text-slate-500 text-xs">von {course.instructor}</p>
+                    <p className="text-[var(--text-primary)] font-medium">{course.title}</p>
+                    <p className="text-[var(--text-muted)] text-xs">von {course.instructor}</p>
                   </div>
                 </td>
                 <td className="p-4">
-                  <span className="bg-violet-500/10 text-violet-300 text-xs px-2.5 py-1 rounded-full">{course.category}</span>
+                  <span className="brand-chip text-xs px-2.5 py-1 rounded-full">{course.category}</span>
                 </td>
-                <td className="p-4 text-slate-300 text-xs">
+                <td className="p-4 text-[var(--text-secondary)] text-xs">
                   {course.level === 'Anfaenger' ? 'Anfänger' : course.level}
                 </td>
-                <td className="p-4 text-white font-medium">{formatPrice(course.price)}</td>
-                <td className="p-4 text-slate-300">
+                <td className="p-4 text-[var(--text-primary)] font-medium">{formatPrice(course.price)}</td>
+                <td className="p-4 text-[var(--text-secondary)]">
                   {course._count?.enrollments ?? course.studentsCount}
                 </td>
                 <td className="p-4 text-amber-400">
@@ -299,7 +299,7 @@ export default function AdminKursePage() {
                   <div className="flex gap-3">
                     <Link href={`/kurse/${course.slug}`} target="_blank" className="text-xs text-violet-400 hover:text-violet-300 transition-colors">Ansehen</Link>
                     <Link href={`/admin/kurse/${course.id}`} className="text-xs text-blue-400 hover:text-blue-300 transition-colors">Module</Link>
-                    <button onClick={() => void openEdit(course)} className="text-xs text-slate-400 hover:text-white transition-colors">Bearbeiten</button>
+                    <button onClick={() => void openEdit(course)} className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">Bearbeiten</button>
                     <button onClick={() => setDeleteId(course.id)} className="text-xs text-red-400 hover:text-red-300 transition-colors">Löschen</button>
                   </div>
                 </td>
@@ -311,19 +311,19 @@ export default function AdminKursePage() {
 
       {/* Create / Edit Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-start justify-center p-4 overflow-y-auto">
-          <div className="bg-[#13131a] border border-[#1e1e2e] rounded-2xl w-full max-w-2xl my-8">
+        <div className="fixed inset-0 bg-[var(--overlay-bg)] backdrop-blur-sm z-50 flex items-start justify-center p-4 overflow-y-auto">
+          <div className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-2xl w-full max-w-2xl my-8">
             {/* Modal header */}
-            <div className="flex items-center justify-between p-6 border-b border-[#1e1e2e]">
-              <h2 className="text-xl font-bold text-white">
+            <div className="flex items-center justify-between p-6 border-b border-[var(--border-base)]">
+              <h2 className="text-xl font-bold text-[var(--text-primary)]">
                 {editingId ? 'Kurs bearbeiten' : 'Neuer Kurs erstellen'}
               </h2>
-              <button onClick={() => setShowModal(false)} className="text-slate-500 hover:text-white transition-colors text-xl">✕</button>
+              <button onClick={() => setShowModal(false)} className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors text-xl">✕</button>
             </div>
 
             <form onSubmit={handleSave} className="p-6 space-y-5">
               {saveError && (
-                <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm px-4 py-3 rounded-xl">
+                <div className="status-error text-sm px-4 py-3 rounded-xl">
                   {saveError}
                 </div>
               )}
@@ -396,17 +396,17 @@ export default function AdminKursePage() {
 
               {/* Checkboxes */}
               <div className="flex gap-6">
-                <label className="flex items-center gap-2 text-slate-300 text-sm cursor-pointer">
+                <label className="flex items-center gap-2 text-[var(--text-secondary)] text-sm cursor-pointer">
                   <input type="checkbox" checked={form.certificate} onChange={f('certificate')} className="accent-violet-600 w-4 h-4" />
                   Zertifikat eingeschlossen
                 </label>
-                <label className="flex items-center gap-2 text-slate-300 text-sm cursor-pointer">
+                <label className="flex items-center gap-2 text-[var(--text-secondary)] text-sm cursor-pointer">
                   <input type="checkbox" checked={form.featured} onChange={f('featured')} className="accent-violet-600 w-4 h-4" />
                   Featured / Empfohlen
                 </label>
               </div>
 
-              <div className="flex gap-3 pt-2 border-t border-[#1e1e2e]">
+              <div className="flex gap-3 pt-2 border-t border-[var(--border-base)]">
                 <button
                   type="submit"
                   disabled={saving}
@@ -417,7 +417,7 @@ export default function AdminKursePage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 border border-[#2a2a3e] text-slate-300 hover:text-white py-3 rounded-xl transition-all"
+                  className="flex-1 border border-[var(--border-strong)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)] py-3 rounded-xl transition-all"
                 >
                   Abbrechen
                 </button>
@@ -429,11 +429,11 @@ export default function AdminKursePage() {
 
       {/* Delete Confirmation */}
       {deleteId && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-[#13131a] border border-[#1e1e2e] rounded-2xl p-8 w-full max-w-md text-center">
+        <div className="fixed inset-0 bg-[var(--overlay-bg)] backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-2xl p-8 w-full max-w-md text-center">
             <div className="text-4xl mb-4">⚠</div>
-            <h2 className="text-xl font-bold text-white mb-2">Kurs löschen?</h2>
-            <p className="text-slate-400 text-sm mb-6">
+            <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">Kurs löschen?</h2>
+            <p className="text-[var(--text-secondary)] text-sm mb-6">
               Alle Module, Lektionen und Einschreibungen werden dauerhaft gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.
             </p>
             <div className="flex gap-3">
@@ -445,7 +445,7 @@ export default function AdminKursePage() {
               </button>
               <button
                 onClick={() => setDeleteId(null)}
-                className="flex-1 border border-[#2a2a3e] text-slate-300 hover:text-white py-2.5 rounded-xl transition-all"
+                className="flex-1 border border-[var(--border-strong)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)] py-2.5 rounded-xl transition-all"
               >
                 Abbrechen
               </button>

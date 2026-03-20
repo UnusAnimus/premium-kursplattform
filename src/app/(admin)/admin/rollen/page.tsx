@@ -26,24 +26,24 @@ export default function AdminRollenPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-white mb-1">Rollen & Zugriffe</h1>
-        <p className="text-slate-400">Berechtigungen für alle Nutzerrollen</p>
+        <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-1">Rollen & Zugriffe</h1>
+        <p className="text-[var(--text-secondary)]">Berechtigungen für alle Nutzerrollen</p>
       </div>
 
       <div className="space-y-6">
         {roles.map(role => (
-          <div key={role.slug} className="bg-[#13131a] border border-[#1e1e2e] rounded-xl p-6">
+          <div key={role.slug} className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-xl p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 <span className={`text-sm px-3 py-1.5 rounded-full border font-medium ${role.color}`}>{role.name}</span>
-                <span className="text-slate-500 text-sm">{role.users} Nutzer</span>
+                <span className="text-[var(--text-muted)] text-sm">{role.users} Nutzer</span>
               </div>
-              <button className="text-sm text-slate-400 hover:text-white transition-colors">Bearbeiten</button>
+              <button className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">Bearbeiten</button>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {role.permissions.map((perm, i) => (
-                <div key={i} className="flex items-center gap-2 text-sm text-slate-300">
-                  <span className="text-emerald-400 text-xs">✓</span>
+                <div key={i} className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+                  <span className="text-emerald-500 text-xs">✓</span>
                   {perm}
                 </div>
               ))}

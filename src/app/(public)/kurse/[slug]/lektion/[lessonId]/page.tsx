@@ -63,17 +63,17 @@ export default async function LessonPlayerPage({ params }: Props) {
   const nextLesson = currentIndex < allLessons.length - 1 ? allLessons[currentIndex + 1] : null;
 
   return (
-    <div className="bg-[#0a0a0f] min-h-screen">
+    <div className="bg-[var(--bg-base)] min-h-screen">
       {/* Top bar */}
-      <div className="border-b border-[#1e1e2e] bg-[#13131a]">
+      <div className="border-b border-[var(--border-base)] bg-[var(--bg-surface)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
           <Link
             href={`/kurse/${slug}`}
-            className="text-slate-400 hover:text-white text-sm flex items-center gap-2 transition-colors"
+            className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-sm flex items-center gap-2 transition-colors"
           >
             ← {course.title}
           </Link>
-          <span className="text-slate-500 text-xs">
+          <span className="text-[var(--text-muted)] text-xs">
             Lektion {currentIndex + 1} von {allLessons.length}
           </span>
         </div>
@@ -84,7 +84,7 @@ export default async function LessonPlayerPage({ params }: Props) {
           {/* Main content */}
           <div className="lg:col-span-3 space-y-6">
             {/* Video area */}
-            <div className="bg-[#13131a] border border-[#1e1e2e] rounded-2xl overflow-hidden">
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-2xl overflow-hidden">
               {lesson.videoUrl ? (
                 <div className="aspect-video">
                   <iframe
@@ -95,17 +95,17 @@ export default async function LessonPlayerPage({ params }: Props) {
                   />
                 </div>
               ) : (
-                <div className="aspect-video bg-gradient-to-br from-violet-900/30 to-amber-900/10 flex flex-col items-center justify-center gap-4">
+                <div className="aspect-video bg-[linear-gradient(135deg,rgba(124,58,237,0.14),rgba(245,158,11,0.08))] flex flex-col items-center justify-center gap-4">
                   <div className="text-6xl opacity-30">▶</div>
-                  <p className="text-slate-500 text-sm">Kein Video für diese Lektion verfügbar</p>
+                  <p className="text-[var(--text-muted)] text-sm">Kein Video für diese Lektion verfügbar</p>
                 </div>
               )}
             </div>
 
             {/* Lesson info */}
-            <div className="bg-[#13131a] border border-[#1e1e2e] rounded-2xl p-6 space-y-4">
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-2xl p-6 space-y-4">
               <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-500 bg-[#1e1e2e] px-3 py-1 rounded-full">
+                <span className="text-xs text-[var(--text-secondary)] bg-[var(--bg-surface-raised)] px-3 py-1 rounded-full">
                   {lesson.module.title}
                 </span>
                 {lesson.isFree && (
@@ -113,13 +113,13 @@ export default async function LessonPlayerPage({ params }: Props) {
                     Kostenlos
                   </span>
                 )}
-                <span className="text-xs text-slate-500 ml-auto">
+                <span className="text-xs text-[var(--text-muted)] ml-auto">
                   {lesson.durationMin} Min.
                 </span>
               </div>
-              <h1 className="text-2xl font-bold text-white">{lesson.title}</h1>
+              <h1 className="text-2xl font-bold text-[var(--text-primary)]">{lesson.title}</h1>
               {lesson.description && (
-                <p className="text-slate-400 leading-relaxed">{lesson.description}</p>
+                <p className="text-[var(--text-secondary)] leading-relaxed">{lesson.description}</p>
               )}
             </div>
 
@@ -128,7 +128,7 @@ export default async function LessonPlayerPage({ params }: Props) {
               {prevLesson ? (
                 <Link
                   href={`/kurse/${slug}/lektion/${prevLesson.id}`}
-                  className="flex-1 bg-[#13131a] border border-[#1e1e2e] hover:border-violet-500/50 text-slate-300 hover:text-white rounded-xl px-5 py-3 text-sm font-medium transition-all text-center"
+                  className="flex-1 bg-[var(--bg-surface)] border border-[var(--border-base)] hover:bg-[var(--bg-surface-hover)] hover:border-violet-500/50 text-[var(--text-primary)] rounded-xl px-5 py-3 text-sm font-medium transition-all text-center"
                 >
                   ← Vorherige Lektion
                 </Link>
@@ -152,15 +152,15 @@ export default async function LessonPlayerPage({ params }: Props) {
 
           {/* Sidebar: course curriculum */}
           <div className="lg:col-span-1">
-            <div className="bg-[#13131a] border border-[#1e1e2e] rounded-2xl overflow-hidden sticky top-6">
-              <div className="p-4 border-b border-[#1e1e2e]">
-                <h2 className="text-white font-semibold text-sm">Kursinhalt</h2>
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-base)] rounded-2xl overflow-hidden sticky top-6">
+              <div className="p-4 border-b border-[var(--border-base)]">
+                <h2 className="text-[var(--text-primary)] font-semibold text-sm">Kursinhalt</h2>
               </div>
               <div className="overflow-y-auto max-h-[600px]">
                 {course.modules.map(module => (
                   <div key={module.id}>
-                    <div className="px-4 py-2.5 bg-[#1a1a24] border-b border-[#1e1e2e]">
-                      <p className="text-slate-400 text-xs font-medium">{module.title}</p>
+                    <div className="px-4 py-2.5 bg-[var(--bg-surface-raised)] border-b border-[var(--border-base)]">
+                      <p className="text-[var(--text-secondary)] text-xs font-medium">{module.title}</p>
                     </div>
                     {module.lessons.map(l => {
                       const isCurrent = l.id === lessonId;
@@ -170,20 +170,20 @@ export default async function LessonPlayerPage({ params }: Props) {
                           {accessible ? (
                             <Link
                               href={`/kurse/${slug}/lektion/${l.id}`}
-                              className={`flex items-center gap-3 px-4 py-3 text-xs border-b border-[#1e1e2e] transition-colors ${
+                              className={`flex items-center gap-3 px-4 py-3 text-xs border-b border-[var(--border-base)] transition-colors ${
                                 isCurrent
-                                  ? 'bg-violet-600/20 text-violet-300 border-l-2 border-l-violet-500'
-                                  : 'text-slate-400 hover:bg-white/2 hover:text-white'
+                                  ? 'bg-violet-600/20 text-[var(--badge-brand-text)] border-l-2 border-l-violet-500'
+                                  : 'text-[var(--text-secondary)] hover:bg-[var(--row-hover)] hover:text-[var(--text-primary)]'
                               }`}
                             >
-                              <span className={isCurrent ? 'text-violet-400' : 'text-slate-600'}>
+                              <span className={isCurrent ? 'text-[var(--badge-brand-text)]' : 'text-[var(--text-muted)]'}>
                                 {isCurrent ? '▶' : '○'}
                               </span>
                               <span className="flex-1 leading-snug">{l.title}</span>
-                              <span className="text-slate-600 shrink-0">{l.durationMin}m</span>
+                              <span className="text-[var(--text-muted)] shrink-0">{l.durationMin}m</span>
                             </Link>
                           ) : (
-                            <div className="flex items-center gap-3 px-4 py-3 text-xs border-b border-[#1e1e2e] text-slate-600">
+                            <div className="flex items-center gap-3 px-4 py-3 text-xs border-b border-[var(--border-base)] text-[var(--text-muted)]">
                               <span>🔒</span>
                               <span className="flex-1 leading-snug">{l.title}</span>
                               <span className="shrink-0">{l.durationMin}m</span>

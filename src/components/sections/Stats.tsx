@@ -1,11 +1,16 @@
-const stats = [
-  { value: '6.000+', label: 'Aktive Studierende', icon: '◎' },
-  { value: '6', label: 'Premium Kurse', icon: '◈' },
-  { value: '4,9', label: 'Durchschnittsbewertung', icon: '★' },
-  { value: '98%', label: 'Zufriedenheitsrate', icon: '✦' },
-];
+interface StatsProps {
+  courseCount: number;
+  averageRating: number;
+}
 
-export function Stats() {
+export function Stats({ courseCount, averageRating }: StatsProps) {
+  const stats = [
+    { value: '6.000+', label: 'Aktive Studierende', icon: '◎' },
+    { value: String(courseCount), label: 'Premium Kurse', icon: '◈' },
+    { value: averageRating.toLocaleString('de-DE', { minimumFractionDigits: 1, maximumFractionDigits: 1 }), label: 'Durchschnittsbewertung', icon: '★' },
+    { value: '98%', label: 'Zufriedenheitsrate', icon: '✦' },
+  ];
+
   return (
     <section className="py-20 border-y border-[var(--border-base)] bg-[var(--bg-surface)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

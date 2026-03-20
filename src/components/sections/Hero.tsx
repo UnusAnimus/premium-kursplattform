@@ -3,7 +3,11 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, Sparkles, Users, BookOpen, Star } from 'lucide-react';
 
-export function Hero() {
+interface HeroProps {
+  courseCount: number;
+}
+
+export function Hero({ courseCount }: HeroProps) {
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[var(--bg-base)]">
       {/* Layer 1: Large gradient orbs */}
@@ -83,7 +87,7 @@ export function Hero() {
           <div className="w-1 h-1 rounded-full bg-[var(--border-strong)]" />
           <div className="flex items-center gap-2">
             <BookOpen className="w-4 h-4 text-violet-400" />
-            <span>50+ Premium-Kurse</span>
+            <span>{courseCount} Premium-Kurse</span>
           </div>
           <div className="w-1 h-1 rounded-full bg-[var(--border-strong)]" />
           <div className="flex items-center gap-2">

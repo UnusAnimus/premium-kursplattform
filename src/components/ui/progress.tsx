@@ -29,11 +29,11 @@ export function Progress({ value, max = 100, label, showValue = false, variant =
     <div className={`flex flex-col gap-1.5 ${className}`}>
       {(label || showValue) && (
         <div className="flex justify-between items-center">
-          {label && <span className="text-xs text-slate-400">{label}</span>}
-          {showValue && <span className="text-xs text-slate-400">{Math.round(percentage)}%</span>}
+          {label && <span className="text-xs text-[var(--text-secondary)]">{label}</span>}
+          {showValue && <span className="text-xs text-[var(--text-secondary)]">{Math.round(percentage)}%</span>}
         </div>
       )}
-      <div className={`w-full bg-[#1e1e2e] rounded-full overflow-hidden ${sizes[size]}`}>
+      <div className={`w-full bg-[var(--bg-surface-raised)] rounded-full overflow-hidden ${sizes[size]}`}>
         <div
           className={`${variants[variant]} rounded-full transition-all duration-500 h-full`}
           style={{ width: `${percentage}%` }}
