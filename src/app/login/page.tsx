@@ -177,21 +177,24 @@ function LoginForm() {
 
       {/* Social logins */}
       <div className="space-y-3">
-        {[
-          { icon: 'G', label: 'Mit Google fortfahren', color: 'text-red-400' },
-          { icon: 'f', label: 'Mit Facebook fortfahren', color: 'text-blue-400' },
-        ].map((social, i) => (
-          <button
-            key={i}
-            disabled
-            className="w-full border border-[var(--border-base)] text-[var(--text-muted)] py-3 rounded-xl text-sm font-medium flex items-center justify-center gap-3 opacity-50 cursor-not-allowed"
-            title="Demnächst verfügbar"
-          >
-            <span className={`font-bold ${social.color}`}>{social.icon}</span>
-            {social.label}
-            <span className="text-xs">(bald verfügbar)</span>
-          </button>
-        ))}
+        <button
+          type="button"
+          onClick={() => signIn('google', { callbackUrl })}
+          className="w-full border border-[var(--border-base)] text-[var(--text-primary)] hover:border-violet-500/50 hover:bg-violet-500/5 py-3 rounded-xl text-sm font-medium flex items-center justify-center gap-3 transition-all"
+        >
+          <span className="font-bold text-red-400">G</span>
+          Mit Google fortfahren
+        </button>
+        <button
+          type="button"
+          disabled
+          className="w-full border border-[var(--border-base)] text-[var(--text-muted)] py-3 rounded-xl text-sm font-medium flex items-center justify-center gap-3 opacity-50 cursor-not-allowed"
+          title="Demnächst verfügbar"
+        >
+          <span className="font-bold text-blue-400">f</span>
+          Mit Facebook fortfahren
+          <span className="text-xs">(bald verfügbar)</span>
+        </button>
       </div>
     </div>
   );

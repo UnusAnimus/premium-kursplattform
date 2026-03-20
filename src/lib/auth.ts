@@ -1,5 +1,6 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import GoogleProvider from 'next-auth/providers/google';
 import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 
@@ -12,6 +13,14 @@ const SUPER_ADMIN_NAME = process.env.SUPER_ADMIN_NAME || 'Super Administrator';
 
 export const authOptions: NextAuthOptions = {
   providers: [
+    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+      ? [
+          GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+          }),
+        ]
+      : []),
     CredentialsProvider({
       name: 'credentials',
       credentials: {
@@ -70,10 +79,46 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async signIn({ user, account }) {
+      // Handle Google OAuth: create user if not exists, or link existing account
+      if (account?.provider === 'google' && user.email) {
+        const emailLower = user.email.toLowerCase();
+        const existingUser = await prisma.user.findUnique({
+          where: { email: emailLower },
+        });
+
+        if (!existingUser) {
+          await prisma.user.create({
+            data: {
+              name: user.name || emailLower.split('@')[0],
+              email: emailLower,
+              emailVerified: new Date(),
+              avatar: user.image ?? null,
+            },
+          });
+        } else if (!existingUser.emailVerified) {
+          await prisma.user.update({
+            where: { id: existingUser.id },
+            data: { emailVerified: new Date() },
+          });
+        }
+      }
+      return true;
+    },
+    async jwt({ token, user, account }) {
       if (user) {
-        token.role = ((user as { role?: string }).role) ?? 'member';
-        token.id = user.id;
+        if (account?.provider === 'google' && user.email) {
+          // Fetch DB user to get our internal id and role
+          const dbUser = await prisma.user.findUnique({
+            where: { email: user.email.toLowerCase() },
+          });
+          token.role = dbUser?.role ?? 'member';
+          token.id = dbUser?.id ?? user.id;
+        } else {
+          // Credentials login – user object already carries role and id
+          token.role = ((user as { role?: string }).role) ?? 'member';
+          token.id = user.id;
+        }
       }
       return token;
     },
