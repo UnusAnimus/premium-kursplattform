@@ -4,13 +4,21 @@ import { courses, categories } from '@/lib/data';
 import { CourseCard } from '@/components/sections/CourseCard';
 
 export default function KursePage() {
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('alle');
   const [selectedLevel, setSelectedLevel] = useState('alle');
 
   const filtered = courses.filter(course => {
     const matchCat = selectedCategory === 'alle' || course.category === selectedCategory;
     const matchLevel = selectedLevel === 'alle' || course.level === selectedLevel;
-    return matchCat && matchLevel;
+    const q = searchQuery.trim().toLowerCase();
+    const matchSearch =
+      !q ||
+      course.title.toLowerCase().includes(q) ||
+      course.description.toLowerCase().includes(q) ||
+      course.instructor.toLowerCase().includes(q) ||
+      course.category.toLowerCase().includes(q);
+    return matchCat && matchLevel && matchSearch;
   });
 
   return (
@@ -28,9 +36,20 @@ export default function KursePage() {
               Kurse & Lehrpfade
             </span>
           </h1>
-          <p className="text-slate-400 text-lg max-w-2xl">
+          <p className="text-slate-400 text-lg max-w-2xl mb-8">
             Entdecke unsere handverlesenen Kurse von Experten in Metaphysik, Heilung, Astrologie und mehr.
           </p>
+          {/* Search field */}
+          <div className="relative max-w-xl">
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">🔍</span>
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder="Kurse durchsuchen…"
+              className="w-full pl-11 pr-4 py-3 bg-[#13131a] border border-[#1e1e2e] focus:border-violet-500/60 rounded-xl text-white placeholder-slate-500 text-sm outline-none transition-colors"
+            />
+          </div>
         </div>
       </div>
 
@@ -83,7 +102,15 @@ export default function KursePage() {
         {filtered.length === 0 && (
           <div className="text-center py-24">
             <div className="text-6xl mb-4 opacity-30">◈</div>
-            <p className="text-slate-400">Keine Kurse für diese Filter gefunden.</p>
+            <p className="text-slate-400 mb-2">Keine Kurse für diese Suche gefunden.</p>
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="text-violet-400 hover:text-violet-300 text-sm underline transition-colors"
+              >
+                Suche zurücksetzen
+              </button>
+            )}
           </div>
         )}
       </div>
